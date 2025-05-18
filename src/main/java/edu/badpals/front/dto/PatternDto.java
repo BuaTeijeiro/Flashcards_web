@@ -4,6 +4,7 @@ import java.util.List;
 
 public class PatternDto {
     private Long Id;
+    private String name;
     private String pattern;
     private List<InflectionDto> inflections;
 
@@ -13,6 +14,14 @@ public class PatternDto {
 
     public void setId(Long id) {
         Id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getPattern() {

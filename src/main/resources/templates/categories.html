@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head >
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Categorías Gramaticales</title>
 </head>
 <body>
 <h2>CATEGORÍAS</h2>
@@ -27,23 +27,17 @@
         <td th:text="${category.getPatterns().size()}">
         <td th:text="${category.getInflectionsNames().size()}">
     </tr>
+    <tr>
+        <td colspan="3">
+            <button>
+                <a th:href="@{/categories/new}">
+                    Nueva Categoría
+                </a>
+            </button>
+        </td>
+    </tr>
 </table>
 <script>
-    function saveTag(){
-
-        const tag = document.getElementById("newTag").value;
-        const user = document.getElementById("loggedUser").value;
-        alert("Se va a guardar la etiqueta " +  tag + " para " + user)
-        fetch('/localhost:8081/tags/new/' + user, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                tag: tag
-            })
-        }).then(window.location.reload);
-    }
 </script>
 </body>
 </html>

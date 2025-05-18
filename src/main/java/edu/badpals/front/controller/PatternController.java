@@ -1,6 +1,7 @@
 package edu.badpals.front.controller;
 
 import edu.badpals.front.dto.CategoryDto;
+import edu.badpals.front.dto.InflectionMode;
 import edu.badpals.front.dto.PatternDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -29,7 +30,17 @@ public class PatternController {
         );
         PatternDto pattern = response.getBody();
         model.addAttribute("pattern", pattern);
+        model.addAttribute("modos", InflectionMode.values());
         model.addAttribute("user",MainMenuController.HARDCODED_USER);
+
+        return "patternDetail";
+    }
+
+    @GetMapping("/new/{id}")
+    public String newCategory(Model model, @PathVariable long id){
+        model.addAttribute("pattern", new PatternDto());
+        model.addAttribute("category", id);
+
 
         return "patternDetail";
     }

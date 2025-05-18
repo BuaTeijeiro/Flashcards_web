@@ -5,7 +5,7 @@ public class InflectionDto {
 
     private String inflection;
     private String affix;
-    private String mode;
+    private InflectionMode mode;
 
     public long getId() {
         return id;
@@ -19,7 +19,23 @@ public class InflectionDto {
         return affix;
     }
 
-    public String getMode() {
+    public InflectionMode getMode() {
         return mode;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setInflection(String inflection) {
+        this.inflection = inflection;
+    }
+
+    public void setAffix(String affix) {
+        this.affix = affix;
+    }
+
+    public void setMode(InflectionMode mode) {
+        this.mode = mode;
     }
 }

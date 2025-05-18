@@ -5,18 +5,48 @@
     <title>Title</title>
 </head>
 <body>
-<h2>Detalles de Categoría: <span th:text="${category.getName()}"/></h2>
-<h3>
-    Inflexiones
-</h3>
+<h2>Detalles de Categoría</h2>
+<form>
+    <label th:for="name" th:text="'Nombre: '"/>
+    <input id="loggedUser" type="hidden" th:value="${user}">
+    <input id="idCategory" type="hidden" th:value="${category.getId()}">
+    <input th:id="name" th:type="text" th:value="${category.getName()}">
+</form>
+
+<button th:if="${category.getId() == null}" onclick="save()">
+    Guardar
+</button>
+
+<div th:if="${category.getId() != null}">
+    <h3>
+        Inflexiones
+    </h3>
 <table>
     <tr>
         <th>
-            Nombre de Inflexión
+            Nombre
+        </th>
+        <th>
+            Acciones
         </th>
     </tr>
-    <tr th:each="inflexion:${category.getInflectionsNames()}" >
-        <td th:text="${inflexion}"></td>
+    <tr>
+        <td>
+            <input id="newInflection" type="text"/>
+        </td>
+        <td>
+            <button onclick="saveInflection()">
+                Guardar
+            </button>
+        </td>
+    </tr>
+    <tr th:each="inflection:${category.getInflectionsNames()}" >
+        <td th:text="${inflection}"/>
+<!--        <td>-->
+<!--            <button th:onclick="'deleteInflection(\'' + ${inflection} + '\')'">-->
+<!--                Eliminar-->
+<!--            </button>-->
+<!--        </td>-->
     </tr>
 </table>
 <h3>
@@ -31,10 +61,80 @@
     <tr th:each="pattern:${category.getPatterns()}" >
         <td>
             <a th:href="@{/patterns/detail/{id}(id = ${pattern.getId()})}" $>
-                <span th:text="${pattern.getPattern()}"/>
+                <span th:text="${pattern.getName()}"/>
             </a>
         </td>
     </tr>
+    <tr>
+        <td>
+            <button>
+                <a th:href="@{/patterns/new/{id}(id = ${category.getId()})}" $>
+                    <span th:text="'Nuevo'"/>
+                </a>
+            </button>
+        </td>
+    </tr>
 </table>
+</div>
+<script>
+    async function save(){
+
+        const name = document.getElementById("name").value;
+        const user = document.getElementById("loggedUser").value;
+        const response = await fetch('http://localhost:8081/categories/new/' + user, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: name
+            })
+        })
+
+        if (response.ok){
+            const category = await response.json()
+            window.location.replace("/categories/detail/" + category.id)
+        } else {
+            alert("No se ha podido crear la etiqueta")
+        }
+
+    }
+
+    async function saveInflection(){
+        const name = document.getElementById("newInflection").value;
+        const cat = document.getElementById("idCategory").value;
+        const response = await fetch('http://localhost:8081/categories/newInflection/' + cat +"?newInflection=" + name, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+
+        if (response.ok){
+            const category = await response.json()
+            window.location.reload();
+        } else {
+            alert("No se ha podido crear la etiqueta")
+        }
+    }
+
+    async function deleteInflection(name){
+        const cat = document.getElementById("idCategory").value;
+        const response = await fetch('http://localhost:8081/categories/deleteInflection/' + cat +"?oldInflection=" + name, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+
+        if (response.ok){
+            const category = await response.json()
+            window.location.reload();
+        } else {
+            alert("No se ha podido eliminar la inflexión")
+        }
+
+    }
+</script>
 </body>
 </html>

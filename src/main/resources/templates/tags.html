@@ -6,6 +6,7 @@
 </head>
 <body>
     <h2>ETIQUETAS</h2>
+    <input id="loggedUser" type="hidden" th:value="${user}">
     <table>
         <tr>
            <th>
@@ -18,7 +19,7 @@
         <tr>
             <td>
                 <input id="newTag" type="text"/>
-                <input id="loggedUser" type="hidden" th:value="${user}">
+
             </td>
             <td>
                 <button onclick="saveTag()">
@@ -27,21 +28,20 @@
             </td>
         </tr>
         <tr th:each="tag:${tags}" >
-            <td th:text="${tag.getTag()}"></td>
+            <td th:text="${tag.getTag()}"/>
             <td>
-                <button>
+                <button th:onclick="'deleteTag(' + ${tag.id} + ')'">
                     Eliminar
                 </button>
             </td>
         </tr>
     </table>
     <script>
-        function saveTag(){
+        async function saveTag(){
 
             const tag = document.getElementById("newTag").value;
             const user = document.getElementById("loggedUser").value;
-            alert("Se va a guardar la etiqueta " +  tag + " para " + user)
-            fetch('/localhost:8081/tags/new/' + user, {
+            const response = await fetch('http://localhost:8081/tags/new/' + user, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -49,7 +49,26 @@
                 body: JSON.stringify({
                     tag: tag
                 })
-            }).then(window.location.reload);
+            })
+
+            if (response.ok){
+                window.location.reload()
+            } else {
+                alert("No se ha podido crear la etiqueta")
+            }
+
+        }
+
+        async function deleteTag(tag){
+            const response = await fetch('http://localhost:8081/tags/delete/' + tag, {
+                method: 'DELETE',
+            })
+            if (response.ok){
+                window.location.reload()
+            } else {
+                alert("No se ha podido eliminar la etiqueta")
+            }
+
         }
     </script>
 </body>

@@ -5,35 +5,124 @@
     <title>Title</title>
 </head>
 <body>
-<h2>Detalles de Palabra: <span th:text="${word.getWord()}"/></h2>
-<p th:text="'Significado: ' + ${word.getMeaning()}"></p>
-<p th:text="'Categoría: ' + ${word.getCategory().getName()}"></p>
-<p th:text="'Patrón: ' + ${word.getPattern().getId()}"></p>
-<h3>
-    Etiquetas
-</h3>
-<ul>
-    <li th:each="tag:${word.getTags()}">
-        <span th:text="tag.getTag()"/>
-    </li>
-</ul>
-<h3>
-    Inflexiones
-</h3>
-<table>
-    <tr>
-        <th>
-            Nombre de Inflexión
-        </th>
-        <th>
-            Forma
-        </th>
-    </tr>
-    <tr th:each="inflection:${inflections.entrySet()}" >
-        <td th:text="${inflection.getKey()}"></td>
-        <td th:text="${inflection.getValue()}"></td>
-    </tr>
-</table>
+<h2>Detalles de Palabra</h2>
+<form th:object="${word}">
+<!--    <input id="deck" type="hidden" th:value="${word.getDeck().getId()}">-->
+    <input th:id="'deckId'" type="hidden" th:value="${deckId}">
+    <label th:for="'word'" th:text="'Nombre: '"/>
+    <input th:id="'word'" th:type="text" th:field="*{word}">
+    <br/>
+    <label th:for="'significado'" th:text="'Significado: '"/>
+    <input th:id="'significado'" th:type="text" th:field="*{meaning}">
+    <br/>
+    <label th:for="'categoria'" th:text="'Categoría: '"/>
+    <select th:id="'categoria'" onchange="reloadPatterns()" th:field="*{category}">
+        <option th:each="category : ${categories}"
+                th:value="${category.getId()}"
+                th:text="${category.getName()}">
+        </option>
+    </select>
+    <br/>
+    <label th:for="'pattern'" th:text="'Patrón: '"/>
+    <select th:id="'pattern'" th:field="*{pattern}">
+        <option th:each="pattern : ${patterns}"
+                th:value="${pattern}"
+                th:text="${pattern.getName()}">
+        </option>
+    </select>
+</form>
 
+<button onclick="save()">
+    Guardar
+</button>
+
+<div th:if="${word.getId() != null}">
+
+    <h3>
+        Etiquetas
+    </h3>
+    <ul>
+        <li th:each="tag:${word.getTags()}">
+            <span th:text="tag.getTag()"/>
+        </li>
+    </ul>
+    <h3>
+        Inflexiones
+    </h3>
+    <table>
+        <tr>
+            <th>
+                Nombre de Inflexión
+            </th>
+            <th>
+                Forma
+            </th>
+        </tr>
+        <tr th:each="inflection:${inflections.entrySet()}" >
+            <td th:text="${inflection.getKey()}"></td>
+            <td th:text="${inflection.getValue()}"></td>
+        </tr>
+    </table>
+</div>
+<script>
+    async function reloadPatterns(){
+
+        const id = document.getElementById("categoria").value;
+        const response = await fetch('http://localhost:8081/words/detail/' + id, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        if (response.ok){
+            const category = await response.json();
+            loadPatterns(category.patterns);
+        } else {
+            alert("No se ha podido recargar el combo box: " + JSON.stringify(response.status))
+        }
+
+    }
+
+    function loadPatterns(patterns){
+        const select = document.getElementById("pattern");
+        select.innerHTML="";
+        patterns.forEach(function (pattern){
+            const option = document.createElement("option");
+            option.value = pattern.id;
+            option.text = pattern.name;
+            select.appendChild(option);
+        });
+    }
+
+    async function save(){
+
+        const word = document.getElementById("word").value;
+        const meaning = document.getElementById("significado").value;
+        const category = document.getElementById("categoria").value;
+        const pattern = document.getElementById("pattern").value;
+        const deck = document.getElementById("deckId").value;
+        const response = await fetch('http://localhost:8081/words/new/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                word: word,
+                meaning: meaning,
+                deckId: deck,
+                categoryId: category,
+                patternId: pattern
+            })
+        });
+
+        if (response.ok){
+            const word = await response.json()
+            window.location.replace("/categories/detail/" + word.id)
+        } else {
+            alert("No se ha podido crear la palabra")
+        }
+
+    }
+</script>
 </body>
 </html>

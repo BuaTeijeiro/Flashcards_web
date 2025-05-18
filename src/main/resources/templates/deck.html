@@ -39,6 +39,15 @@
                     None Available
                 </td>
             </tr>
+            <tr>
+                <td colspan="3">
+                    <button>
+                        <a th:href="@{/words/new/{id}(id = ${deck.getId()})}">
+                            <span th:text="'Nuevo'"/>
+                        </a>
+                    </button>
+                </td>
+            </tr>
         </table>
     <h2 th:text="'Frases'"/>
     <table id="phrases">

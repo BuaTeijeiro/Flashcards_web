@@ -6,27 +6,117 @@
 </head>
 <body>
 <h2>Detalles de Patron: <span th:text="${pattern.getPattern()}"/></h2>
-<h3>
-    Inflexiones
-</h3>
-<table>
-    <tr>
-        <th>
-            Nombre de Inflexión
-        </th>
-        <th>
-            Modo de Inflexión
-        </th>
-        <th>
-            Afijo de inflexión
-        </th>
-    </tr>
-    <tr th:each="inflexion:${pattern.getInflections()}" >
-        <td th:text="${inflexion.getInflection()}"></td>
-        <td th:text="${inflexion.getMode()}"></td>
-        <td th:text="${inflexion.getAffix()}"></td>
-    </tr>
-</table>
+<form>
+    <input id="idCategory" type="hidden" th:value="${idCategory}">
+    <label th:for="name" th:text="'Nombre: '"/>
+    <input th:id="name" th:type="text" th:value="${pattern.getName()}">
+    <label th:for="pat" th:text="'Patrón: '"/>
+    <input th:id="pat" th:type="text" th:value="${pattern.getPattern()}">
+</form>
+
+<button th:if="${pattern.getId() == null}" onclick="save()">
+    Guardar
+</button>
+
+<div th:if="${pattern.getId() != null}">
+    <h3>
+        Inflexiones
+    </h3>
+    <table>
+        <tr>
+            <th>
+                Nombre de Inflexión
+            </th>
+            <th>
+                Modo de Inflexión
+            </th>
+            <th>
+                Afijo de inflexión
+            </th>
+            <th>
+                Acciones
+            </th>
+        </tr>
+        <tr th:each="inflexion,iterStat :${pattern.getInflections()}" >
+
+            <td th:text="${inflexion.getInflection()}">
+
+            </td>
+            <td>
+                <form th:object="${inflexion}">
+                    <select th:id="'mode' + ${inflexion.getId()}" th:onchange="'activateButton(' + ${inflexion.getId()} + ')'" th:field="*{mode}">
+                        <option th:each="modo : ${modos}"
+                                th:value="${modo}"
+                                th:text="${modo.getDescription()}">
+                        </option>
+                    </select>
+                </form>
+            </td>
+            <td >
+                <input th:id="'id' + ${inflexion.getId()}" type="hidden" th:value="${inflexion.getId()}">
+                <input th:id="'affix' + ${inflexion.getId()}" th:onchange="'activateButton(' + ${inflexion.getId()} + ')'" type="text" th:value="${inflexion.getAffix()}"/>
+            </td>
+            <td>
+                <button th:id="'save' + ${inflexion.getId()}" th:onclick="'saveInflection(' + ${inflexion.getId()} + ')'" th:disabled="'disabled'">
+                    Guardar
+                </button>
+            </td>
+        </tr>
+    </table>
+</div>
+<script>
+    async function save(){
+
+        const name = document.getElementById("name").value;
+        const pattern = document.getElementById("pat").value;
+        const cat = document.getElementById("idCategory").value;
+        const response = await fetch('http://localhost:8081/patterns/new/' + cat, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: name,
+                pattern: pattern
+            })
+        })
+
+        if (response.ok){
+            const pattern = await response.json()
+            window.location.replace("/patterns/detail/" + pattern.id)
+        } else {
+            alert("No se ha podido crear el patrón: " + JSON.stringify(response.status))
+        }
+
+    }
+
+    function activateButton(index){
+        const button = document.getElementById("save"+index);
+        button.disabled = false;
+    }
+
+    async function saveInflection(id){
+        const affix = document.getElementById("affix"+id).value;
+        const mode = document.getElementById("mode" +id).value;
+        const response = await fetch('http://localhost:8081/inflections/update/' + id, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                affix: affix,
+                mode: mode
+            })
+        })
+
+        if (response.ok){
+            const button = document.getElementById("save"+id);
+            button.disabled = true;
+        } else {
+            alert("No se ha podido modificar la inflexión: " + JSON.stringify(response.status))
+        }
+    }
+</script>
 
 </body>
 </html>

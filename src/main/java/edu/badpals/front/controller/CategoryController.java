@@ -50,5 +50,14 @@ public class CategoryController {
         return "categoryDetail";
     }
 
+    @GetMapping("/new")
+    public String newCategory(Model model){
+        model.addAttribute("category", new CategoryDto());
+        model.addAttribute("user",MainMenuController.HARDCODED_USER);
+
+        return "categoryDetail";
+    }
+
+
 
 }
