@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head >
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>Detalles de Categoría: <span th:text="${category.getName()}"/></h2>
+<h3>
+    Inflexiones
+</h3>
+<table>
+    <tr>
+        <th>
+            Nombre de Inflexión
+        </th>
+    </tr>
+    <tr th:each="inflexion:${category.getInflectionsNames()}" >
+        <td th:text="${inflexion}"></td>
+    </tr>
+</table>
+<h3>
+    Patrones
+</h3>
+<table>
+    <tr>
+        <th>
+            Nombre del Patron
+        </th>
+    </tr>
+    <tr th:each="pattern:${category.getPatterns()}" >
+        <td>
+            <a th:href="@{/patterns/detail/{id}(id = ${pattern.getId()})}" $>
+                <span th:text="${pattern.getPattern()}"/>
+            </a>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

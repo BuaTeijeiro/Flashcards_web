@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <span th:text="${deck.getName()}">
+    </span>
+    <span id="deckId" th:text="${deck.getId()}"/>
+    <h2 th:text="Words"/>
+        <table id="words">
+            <tr>
+                <th>Word</th>
+                <th>Meaning</th>
+                <th>Action</th>
+            </tr>
+            <tr>
+                <td>
+                    <input id="newWord" name="word" type="text"/>
+                </td>
+                <td>
+                    <input id="newMeaning" name="meaning" type="text"/>
+                </td>
+                <td>
+                        <button onclick="addWord()">
+                            +
+                        </button>
+                </td>
+            </tr>
+            <tr th:each="word:${deck.getWords()}">
+                <td >
+                    <a th:href="@{/words/detail/{id}(id = ${word.getId()})}">
+                        <span th:text="${word.getWord()}"/>
+                    </a>
+                </td>
+                <td th:text="${word.getMeaning()}"/>
+                <td>
+                    None Available
+                </td>
+            </tr>
+        </table>
+    <h2 th:text="'Frases'"/>
+    <table id="phrases">
+        <tr>
+            <th>Phrase</th>
+            <th>Tiene Reglas de Sustitución?</th>
+        </tr>
+        <tr>
+
+        </tr>
+        <tr th:each="phrase:${deck.getPhrases()}">
+            <td >
+                <a th:href="@{/phrases/detail/{id}(id = ${phrase.getId()})}">
+                    <span th:text="${phrase.getPhrase()}"/>
+                </a>
+            </td>
+            <td th:text="${phrase.getSubstitutionRules().size()>0?'Sí':'No'}"/>
+        </tr>
+    </table>
+<script>
+    function addWord(){
+        const deckId = document.getElementById("deckId").value;
+        const word = document.getElementById("newWord").value;
+        const meaning = document.getElementById("newMeaning").value;
+        fetch('/localhost:8081/words/new', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                word: word,
+                meaning: meaning,
+                deckId: deckId
+            })
+        }).then(res => res.json())
+            .then(newWord => {
+                const table = document.getElementById('words');
+                const tr = document.createElement('tr');
+                const tdword = document.createElement('td');
+                tdword.textContent = newWord.word;
+                const tdmeaning = document.createElement('td');
+                tdmeaning.textContent = newWord.meaning;
+                tr.appendChild(tdword);
+                tr.appendChild(tdmeaning);
+                table.appendChild(tr);
+            });
+    }
+</script>
+</body>
+</html>

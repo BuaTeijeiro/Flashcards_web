@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head >
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>Detalles de Frase:</h2>
+<p th:text="'Frase: ' + ${phrase.getPhrase()}"></p>
+
+<h3>
+    Reglas de Sustitucion
+</h3>
+<table>
+    <tr>
+        <th>
+            Palabra
+        </th>
+        <th>
+            Inflexión
+        </th>
+        <th>
+            Tags
+        </th>
+    </tr>
+    <tr th:each="rule:${phrase.getSubstitutionRules()}" >
+        <td th:text="${rule.getWord()}"></td>
+        <td th:text="${rule.getInflection().getInflection()}"></td>
+        <td>
+            <ul>
+                <li th:each="tag:${rule.getTags()}"/>
+            </ul>
+        </td>
+
+    </tr>
+</table>
+
+</body>
+</html>

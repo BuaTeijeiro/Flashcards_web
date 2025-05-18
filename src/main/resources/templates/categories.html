@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head >
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>CATEGORÍAS</h2>
+<table>
+    <tr>
+        <th>
+            Categoría
+        </th>
+        <th>
+            Nº patrones
+        </th>
+        <th>
+            Nº inflexiones
+        </th>
+    </tr>
+    <tr th:each="category:${categories}" >
+        <td>
+            <a th:href="@{/categories/detail/{id}(id = ${category.getId()})}" $>
+                <span th:text="${category.getName()}"/>
+            </a>
+        </td>
+        <td th:text="${category.getPatterns().size()}">
+        <td th:text="${category.getInflectionsNames().size()}">
+    </tr>
+</table>
+<script>
+    function saveTag(){
+
+        const tag = document.getElementById("newTag").value;
+        const user = document.getElementById("loggedUser").value;
+        alert("Se va a guardar la etiqueta " +  tag + " para " + user)
+        fetch('/localhost:8081/tags/new/' + user, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                tag: tag
+            })
+        }).then(window.location.reload);
+    }
+</script>
+</body>
+</html>

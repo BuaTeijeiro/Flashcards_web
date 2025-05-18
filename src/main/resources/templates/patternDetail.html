@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head >
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>Detalles de Patron: <span th:text="${pattern.getPattern()}"/></h2>
+<h3>
+    Inflexiones
+</h3>
+<table>
+    <tr>
+        <th>
+            Nombre de Inflexión
+        </th>
+        <th>
+            Modo de Inflexión
+        </th>
+        <th>
+            Afijo de inflexión
+        </th>
+    </tr>
+    <tr th:each="inflexion:${pattern.getInflections()}" >
+        <td th:text="${inflexion.getInflection()}"></td>
+        <td th:text="${inflexion.getMode()}"></td>
+        <td th:text="${inflexion.getAffix()}"></td>
+    </tr>
+</table>
+
+</body>
+</html>

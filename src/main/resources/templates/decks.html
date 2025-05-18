@@ -7,7 +7,11 @@
 <body>
     <table>
         <tr th:each="deck: ${decks}">
-            <td th:text="${deck.name}"></td>
+            <td>
+                <a th:href="@{/decks/{id}(id = ${deck.getId()})}">
+                    <span th:text="${deck.name}"/>
+                </a>
+            </td>
         </tr>
     </table>
 </body>

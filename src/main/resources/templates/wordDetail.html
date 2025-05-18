@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head >
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>Detalles de Palabra: <span th:text="${word.getWord()}"/></h2>
+<p th:text="'Significado: ' + ${word.getMeaning()}"></p>
+<p th:text="'Categoría: ' + ${word.getCategory().getName()}"></p>
+<p th:text="'Patrón: ' + ${word.getPattern().getId()}"></p>
+<h3>
+    Etiquetas
+</h3>
+<ul>
+    <li th:each="tag:${word.getTags()}">
+        <span th:text="tag.getTag()"/>
+    </li>
+</ul>
+<h3>
+    Inflexiones
+</h3>
+<table>
+    <tr>
+        <th>
+            Nombre de Inflexión
+        </th>
+        <th>
+            Forma
+        </th>
+    </tr>
+    <tr th:each="inflection:${inflections.entrySet()}" >
+        <td th:text="${inflection.getKey()}"></td>
+        <td th:text="${inflection.getValue()}"></td>
+    </tr>
+</table>
+
+</body>
+</html>

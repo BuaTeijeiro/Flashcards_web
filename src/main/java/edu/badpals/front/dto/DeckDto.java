@@ -1,9 +1,13 @@
 package edu.badpals.front.dto;
 
+import java.util.List;
+
 public class DeckDto {
     private long id;
     private String name;
     private UserDto owner;
+    private List<WordDto> words;
+    private List<PhraseDto> phrases;
 
 
     public long getId() {
@@ -28,5 +32,21 @@ public class DeckDto {
 
     public void setOwner(UserDto owner) {
         this.owner = owner;
+    }
+
+    public List<WordDto> getWords() {
+        return words;
+    }
+
+    public void setWords(List<WordDto> words) {
+        this.words = words;
+    }
+
+    public List<PhraseDto> getPhrases() {
+        return phrases;
+    }
+
+    public void setPhrases(List<PhraseDto> phrases) {
+        this.phrases = phrases;
     }
 }
