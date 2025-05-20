@@ -5,6 +5,7 @@ import java.util.List;
 public class CategoryDto {
     private Long id;
     private String name;
+    private String language;
     private List<String> inflectionsNames;
     private List<PatternDto> patterns;
 
@@ -38,5 +39,13 @@ public class CategoryDto {
 
     public void setPatterns(List<PatternDto> patterns) {
         this.patterns = patterns;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
     }
 }

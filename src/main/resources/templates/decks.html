@@ -13,6 +13,15 @@
                 </a>
             </td>
         </tr>
+        <tr>
+            <td>
+                <button>
+                    <a th:href="@{/decks/new/{id}(id = ${ownerId})}">
+                        <span th:text="'Nuevo'"/>
+                    </a>
+                </button>
+            </td>
+        </tr>
     </table>
 </body>
 </html>

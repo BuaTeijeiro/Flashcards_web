@@ -17,18 +17,12 @@
         <th>
             Nº inflexiones
         </th>
-    </tr>
-    <tr th:each="category:${categories}" >
-        <td>
-            <a th:href="@{/categories/detail/{id}(id = ${category.getId()})}" $>
-                <span th:text="${category.getName()}"/>
-            </a>
-        </td>
-        <td th:text="${category.getPatterns().size()}">
-        <td th:text="${category.getInflectionsNames().size()}">
+        <th>
+            Acciones
+        </th>
     </tr>
     <tr>
-        <td colspan="3">
+        <td colspan="4">
             <button>
                 <a th:href="@{/categories/new}">
                     Nueva Categoría
@@ -36,8 +30,44 @@
             </button>
         </td>
     </tr>
+    <tr th:each="category:${categories}" th:id="'row' + ${category.getId()}">
+        <td>
+            <a th:href="@{/categories/detail/{id}(id = ${category.getId()})}" $>
+                <span th:text="${category.getName()}"/>
+            </a>
+        </td>
+        <td th:text="${category.getPatterns().size()}">
+        <td th:text="${category.getInflectionsNames().size()}">
+        <td>
+            <button th:onclick="'removeCategory(' + ${category.getId()} + ')'">
+                Eliminar
+            </button>
+        </td>
+
+    </tr>
+
 </table>
 <script>
+    async function removeCategory(id){
+        if (confirm("Está seguro de que quiere eliminar la categoría? Todos los patrones e inflexiones de esta se eliminarán también")) {
+            const response = await fetch('http://localhost:8081/categories/delete', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id: id
+                })
+            });
+            if (response.ok){
+                alert("Se ha eliminado correctamente");
+                document.getElementById("row"+id).remove();
+
+            } else {
+                alert("No se ha podido eliminar la categoría. Error: " + response.status)
+            }
+        }
+    }
 </script>
 </body>
 </html>

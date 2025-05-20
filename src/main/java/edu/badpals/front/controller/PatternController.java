@@ -31,6 +31,7 @@ public class PatternController {
         PatternDto pattern = response.getBody();
         model.addAttribute("pattern", pattern);
         model.addAttribute("modos", InflectionMode.values());
+        model.addAttribute("categoryId", id);
         model.addAttribute("user",MainMenuController.HARDCODED_USER);
 
         return "patternDetail";
@@ -40,7 +41,7 @@ public class PatternController {
     public String newCategory(Model model, @PathVariable long id){
         model.addAttribute("pattern", new PatternDto());
         model.addAttribute("category", id);
-
+        model.addAttribute("categoryId", id);
 
         return "patternDetail";
     }

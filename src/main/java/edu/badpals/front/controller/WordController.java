@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +44,11 @@ public class WordController {
         List<CategoryDto> categories = response3.getBody();
         model.addAttribute("categories", categories);
         model.addAttribute("deckId", 0);
-        model.addAttribute("patterns", word.getCategory().getPatterns());
+        if (word.getCategory()!= null) {
+            model.addAttribute("patterns", word.getCategory().getPatterns());
+        } else {
+            model.addAttribute("patterns" , new ArrayList<>());
+        }
         model.addAttribute("user",MainMenuController.HARDCODED_USER);
         ResponseEntity<Map<String,String>> response2 = restTemplate.exchange(
                 "http://localhost:8081/words/full-inflected/" + id,

@@ -5,15 +5,34 @@
     <title>Title</title>
 </head>
 <body>
-    <span th:text="${deck.getName()}">
-    </span>
+    <label for="deckName" th:text="'Nombre: '"/>
+    <input id="deckName" type = "text" onchange="activateButton('grabarCambios')" th:value="${deck.getName()}">
+    <br/>
+    <label for="deckLanguage" th:text="'Idioma: '"/>
+    <input id="deckLanguage" type = "text" onchange="activateButton('grabarCambios')" th:value="${deck.getLanguage()}">
+    <br/>
     <input id="deckId" type="hidden" th:value="${deck.getId()}"/>
-    <h2 th:text="Words"/>
+    <input id="ownerId" type="hidden" th:value="${owner}"/>
+
+    <div th:if="${deck.getId() == null}">
+        <button onclick="create()">
+            Guardar
+        </button>
+    </div>
+
+    <div th:if="${deck.getId()!= null}">
+        <button id="grabarCambios" onclick="update()" disabled>
+            Grabar Cambios
+        </button>
+        <br/>
+        <h2 th:text="Words"/>
         <table id="words">
             <tr>
-                <th>Word</th>
-                <th>Meaning</th>
-                <th>Action</th>
+                <th>Palabra</th>
+                <th>Significado</th>
+                <th>Nivel</th>
+                <th>Categoria</th>
+                <th>Acción</th>
             </tr>
             <tr>
                 <td>
@@ -23,28 +42,34 @@
                     <input id="newMeaning" name="meaning" type="text"/>
                 </td>
                 <td>
+                    <input id="newLevel" name="level" type="number"/>
+                </td>
+                <td>
                         <button onclick="addWord()">
-                            +
+                            Añadir
                         </button>
                 </td>
             </tr>
-            <tr th:each="word:${deck.getWords()}">
+            <tr th:each="word :${deck.getWords()}" th:id="'row' + ${word.getId()}">
                 <td >
-                    <a th:href="@{/words/detail/{id}(id = ${word.getId()})}">
-                        <span th:text="${word.getWord()}"/>
-                    </a>
+                    <input th:id="'id' + ${word.getId()}" type="hidden" th:value="${word.getId()}">
+                    <input th:id="'word' + ${word.getId()}" th:onchange="'activateWordButton(' + ${word.getId()} + ')'" type="text" th:value="${word.getWord()}"/>
                 </td>
-                <td th:text="${word.getMeaning()}"/>
+                <td >
+                    <input th:id="'meaning' + ${word.getId()}" th:onchange="'activateWordButton(' + ${word.getId()} + ')'" type="text" th:value="${word.getMeaning()}"/>
+                </td>
+                <td >
+                    <input th:id="'level' + ${word.getId()}" th:onchange="'activateWordButton(' + ${word.getId()} + ')'" type="number" th:value="${word.getLevel()}"/>
+                </td>
                 <td>
-                    None Available
-                </td>
-            </tr>
-            <tr>
-                <td colspan="3">
-                    <button>
-                        <a th:href="@{/words/new/{id}(id = ${deck.getId()})}">
-                            <span th:text="'Nuevo'"/>
-                        </a>
+                    <button th:id="'saveWord' + ${word.getId()}" th:onclick="'updateWord(' + ${word.getId()} + ')'" th:disabled="'disabled'">
+                        Grabar Cambios
+                    </button>
+                    <button th:onclick="'seeWord(' + ${word.getId()} + ')'">
+                        Detalles
+                    </button>
+                    <button th:onclick="'deleteWord(' + ${word.getId()} + ')'">
+                        Eliminar
                     </button>
                 </td>
             </tr>
@@ -79,7 +104,7 @@
             <td>
                 <input id="newUser" type="text">
             </td>
-            <th><input value="1" type="number" disabled="disabled"></th>
+            <th><input id ="newUserLevel" value="1" type="number"></th>
             <th>
                 <button onclick="addUser()">
                     Añadir
@@ -87,22 +112,31 @@
             </th>
         </tr>
         </tr>
-        <tr th:each="user:${users}">
-            <td th:text="${user.getUser().getEmail()}" />
-            <td th:text="${user.getLevel()}" />
+        <tr th:each="user:${users}" th:id="'rowUser' + ${user.getUser().getId()}">
+
             <td>
-                <button>
+                <span th:id="'user' + ${user.getUser().getId()}"  th:text="${user.getUser().getEmail()}"/>
+            </td>
+            <td >
+                <input th:id="'userLevel' + ${user.getUser().getId()}" th:onchange="'activateUserButton(' + ${user.getUser().getId()} + ')'" type="number" th:value="${user.getLevel()}"/>
+            </td>
+            <td>
+                <button th:id="'saveUser' + ${user.getUser().getId()}" th:onclick="'updateUser(' + ${user.getUser().getId()} + ')'" th:disabled="'disabled'">
+                    Grabar Cambios
+                </button>
+                <button th:onclick="'removeUser(' + ${user.getUser().getId()} + ')'">
                     Eliminar
                 </button>
             </td>
         </tr>
     </table>
+    </div>
 <script>
     async function addUser(){
 
         const email = document.getElementById("newUser").value;
         const deck = document.getElementById("deckId").value;
-        const level = 1;
+        const level = document.getElementById("newUserLevel").value;;
         const response = await fetch('http://localhost:8081/decks/users/add', {
             method: 'PUT',
             headers: {
@@ -122,32 +156,172 @@
         }
     }
 
-    function addWord(){
+    async function addWord(){
         const deckId = document.getElementById("deckId").value;
         const word = document.getElementById("newWord").value;
         const meaning = document.getElementById("newMeaning").value;
-        fetch('/localhost:8081/words/new', {
-            method: 'PUT',
+        const level = document.getElementById("newLevel").value;
+        const response = await fetch('http://localhost:8081/words/new', {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 word: word,
                 meaning: meaning,
-                deckId: deckId
+                deckId: deckId,
+                level: level
             })
-        }).then(res => res.json())
-            .then(newWord => {
-                const table = document.getElementById('words');
-                const tr = document.createElement('tr');
-                const tdword = document.createElement('td');
-                tdword.textContent = newWord.word;
-                const tdmeaning = document.createElement('td');
-                tdmeaning.textContent = newWord.meaning;
-                tr.appendChild(tdword);
-                tr.appendChild(tdmeaning);
-                table.appendChild(tr);
+        })
+
+        if (response.ok){
+            window.location.reload();
+        }
+
+    }
+
+    function seeWord(id){
+        window.location.replace("/words/detail/" + id);
+    }
+
+    async function updateWord(id){
+        const word = document.getElementById("word" + id).value;
+        const meaning = document.getElementById("meaning" + id).value;
+        const level = document.getElementById("level" + id).value;
+        const response = await fetch('http://localhost:8081/words/update', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: id,
+                word: word,
+                meaning: meaning,
+                level: level
+            })
+        });
+
+        if (response.ok){
+            alert("Se ha modificado correctamente");
+            deactivateButton("saveWord" + id);
+        } else {
+            alert("No se ha podido modificar")
+        }
+    }
+
+    async function deleteWord(id){
+        if (confirm("Está seguro de que quiere eliminar la palabra?")) {
+            const response = await fetch('http://localhost:8081/words/delete', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id: id,
+                })
             });
+            if (response.ok){
+                alert("Se ha eliminado correctamente");
+                document.getElementById("row"+id).remove();
+
+            } else {
+                alert("No se ha podido eliminar la palabra. Error: " + response.status)
+            }
+        }
+    }
+
+    async function updateUser(id){
+        const email = document.getElementById("user" + id).textContent;
+        const level = document.getElementById("userLevel" + id).value;
+        const deckId = document.getElementById("deckId").value;
+        const response = await fetch('http://localhost:8081/decks/users/update', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userEmail: email,
+                deckId: deckId,
+                level: level
+            })
+        });
+
+        if (response.ok){
+            alert("Se ha modificado correctamente");
+            deactivateButton("saveUser" + id);
+        } else {
+            alert("No se ha podido modificar")
+        }
+    }
+
+    async function create(){
+        const owner = document.getElementById("ownerId").value;
+        const name = document.getElementById("deckName").value;
+        const language = document.getElementById("deckLanguage").value;
+        const response = await fetch('http://localhost:8081/decks/new' , {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                owner: owner,
+                name: name,
+                language: language
+            })
+        });
+
+        if (response.ok){
+            const newDeck = await response.json();
+            alert(JSON.stringify(newDeck));
+            window.location.replace("/decks/" + newDeck.id);
+        } else {
+            alert("No se ha podido guardar el conjunto," + response.status);
+        }
+    }
+
+    async function update(){
+        const deck = document.getElementById("deckId").value;
+        const name = document.getElementById("deckName").value;
+        const language = document.getElementById("deckLanguage").value;
+        const response = await fetch('http://localhost:8081/decks/update' , {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: deck,
+                name: name,
+                language: language
+            })
+        });
+
+        if (response.ok){
+            const newDeck = await response.json();
+            alert(JSON.stringify(newDeck));
+            window.location.replace("/decks/" + newDeck.id);
+        } else {
+            alert("No se ha podido modificar el conjunto," + response.status);
+        }
+    }
+
+
+
+    function activateButton(id){
+        const button = document.getElementById(id);
+        button.disabled = false;
+    }
+
+    function deactivateButton(id){
+        const button = document.getElementById(id);
+        button.disabled = true;
+    }
+
+    function activateWordButton(id){
+        activateButton("saveWord" + id);
+    }
+
+    function activateUserButton(id){
+        activateButton("saveUser" + id);
     }
 </script>
 </body>

@@ -3,18 +3,19 @@ package edu.badpals.front.dto;
 import java.util.List;
 
 public class DeckDto {
-    private long id;
+    private Long id;
     private String name;
+    private String language;
     private UserDto owner;
     private List<WordDto> words;
     private List<PhraseDto> phrases;
 
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -48,5 +49,13 @@ public class DeckDto {
 
     public void setPhrases(List<PhraseDto> phrases) {
         this.phrases = phrases;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
     }
 }

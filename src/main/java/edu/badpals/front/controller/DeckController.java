@@ -23,19 +23,23 @@ import java.util.List;
 @RequestMapping("/decks/")
 public class DeckController {
 
+
+
     @Autowired
     private RestTemplate restTemplate;
 
     @GetMapping("/")
     public String showDecks(Model model){
+        String id = MainMenuController.HARDCODED_USER;
         ResponseEntity<List<DeckDto>> response = restTemplate.exchange(
-                "http://localhost:8081/decks/all/" + MainMenuController.HARDCODED_USER,
+                "http://localhost:8081/decks/all/" + id,
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<List<DeckDto>>() {}
         );
         List<DeckDto> decks = response.getBody();
         model.addAttribute("decks", decks);
+        model.addAttribute("ownerId", id);
         return "decks";
     }
 
@@ -48,6 +52,7 @@ public class DeckController {
                 new ParameterizedTypeReference<DeckDto>() {}
         );
         DeckDto deck = response.getBody();
+
         model.addAttribute("deck", deck);
         ResponseEntity<List<DeckUserDto>> responseUsers = restTemplate.exchange(
                 "http://localhost:8081/decks/users/" + MainMenuController.HARDCODED_USER,
@@ -60,6 +65,16 @@ public class DeckController {
             users = responseUsers.getBody();
         }
         model.addAttribute("users",users);
+        model.addAttribute("owner",MainMenuController.HARDCODED_USER);
+        return "deck";
+    }
+
+    @GetMapping("/new/{id}")
+    public String newDeck(@PathVariable long id,  Model model){
+        model.addAttribute("deck", new DeckDto());
+        List<DeckUserDto> users = new ArrayList<>();
+        model.addAttribute("users",users);
+        model.addAttribute("owner",id);
         return "deck";
     }
 }

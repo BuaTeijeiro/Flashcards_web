@@ -7,17 +7,24 @@
 <body>
 <h2>Detalles de Categoría</h2>
 <form>
-    <label th:for="name" th:text="'Nombre: '"/>
+    <label th:for="'name'" th:text="'Nombre: '"/>
     <input id="loggedUser" type="hidden" th:value="${user}">
     <input id="idCategory" type="hidden" th:value="${category.getId()}">
-    <input th:id="name" th:type="text" th:value="${category.getName()}">
+    <input th:id="'name'" th:type="text" th:value="${category.getName()}">
+    <br/>
+    <label th:for="'language'" th:text="'Idioma: '"/>
+    <input th:id="'language'" th:type="text" th:value="${category.getLanguage()}">
 </form>
 
-<button th:if="${category.getId() == null}" onclick="save()">
+<button th:if="${category.getId() == null}" onclick="create()">
     Guardar
 </button>
 
 <div th:if="${category.getId() != null}">
+    <button onclick="save()">
+        Grabar Cambios
+    </button>
+    <br/>
     <h3>
         Inflexiones
     </h3>
@@ -41,7 +48,7 @@
         </td>
     </tr>
     <tr th:each="inflection:${category.getInflectionsNames()}" >
-        <td th:text="${inflection}"/>
+        <td th:text="${inflection}" th/>
 <!--        <td>-->
 <!--            <button th:onclick="'deleteInflection(\'' + ${inflection} + '\')'">-->
 <!--                Eliminar-->
@@ -57,16 +64,12 @@
         <th>
             Nombre del Patron
         </th>
-    </tr>
-    <tr th:each="pattern:${category.getPatterns()}" >
-        <td>
-            <a th:href="@{/patterns/detail/{id}(id = ${pattern.getId()})}" $>
-                <span th:text="${pattern.getName()}"/>
-            </a>
-        </td>
+        <th>
+            Acción
+        </th>
     </tr>
     <tr>
-        <td>
+        <td colspan="2">
             <button>
                 <a th:href="@{/patterns/new/{id}(id = ${category.getId()})}" $>
                     <span th:text="'Nuevo'"/>
@@ -74,12 +77,26 @@
             </button>
         </td>
     </tr>
+    <tr th:each="pattern:${category.getPatterns()}" th:id="'rowPattern' + ${pattern.getId()}">
+        <td>
+            <a th:href="@{/patterns/detail/{id}(id = ${pattern.getId()})}" $>
+                <span th:text="${pattern.getName()}"/>
+            </a>
+        </td>
+        <td>
+            <button th:onclick="'removePattern(' + ${pattern.getId()} + ')'">
+                Eliminar
+            </button>
+        </td>
+
+    </tr>
 </table>
 </div>
 <script>
-    async function save(){
+    async function create(){
 
         const name = document.getElementById("name").value;
+        const language = document.getElementById("language").value;
         const user = document.getElementById("loggedUser").value;
         const response = await fetch('http://localhost:8081/categories/new/' + user, {
             method: 'POST',
@@ -87,7 +104,8 @@
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                name: name
+                name: name,
+                language: language
             })
         })
 
@@ -95,9 +113,56 @@
             const category = await response.json()
             window.location.replace("/categories/detail/" + category.id)
         } else {
-            alert("No se ha podido crear la etiqueta")
+            alert("No se ha podido crear la categoría")
         }
 
+    }
+
+    async function save(){
+
+        const name = document.getElementById("name").value;
+        const language = document.getElementById("language").value;
+        const id = document.getElementById("idCategory").value;
+        const response = await fetch('http://localhost:8081/categories/update', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: name,
+                language: language,
+                id: id
+            })
+        })
+
+        if (response.ok){
+            alert("Se han grabado los cambios correctamente")
+            window.location.reload()
+        } else {
+            alert("No se ha podido modificar la categoría")
+        }
+
+    }
+
+    async function removePattern(id){
+        if (confirm("Está seguro de que quiere eliminar el patrón? Todas las inflexiones de esta se eliminarán también")) {
+            const response = await fetch('http://localhost:8081/patterns/delete', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id: id
+                })
+            });
+            if (response.ok){
+                alert("Se ha eliminado el patrón correctamente");
+                document.getElementById("rowPattern"+id).remove();
+
+            } else {
+                alert("No se ha podido eliminar el patrón. Error: " + response.status)
+            }
+        }
     }
 
     async function saveInflection(){

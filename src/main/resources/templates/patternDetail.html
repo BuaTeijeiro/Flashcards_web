@@ -7,18 +7,22 @@
 <body>
 <h2>Detalles de Patron: <span th:text="${pattern.getPattern()}"/></h2>
 <form>
-    <input id="idCategory" type="hidden" th:value="${idCategory}">
-    <label th:for="name" th:text="'Nombre: '"/>
-    <input th:id="name" th:type="text" th:value="${pattern.getName()}">
-    <label th:for="pat" th:text="'Patrón: '"/>
-    <input th:id="pat" th:type="text" th:value="${pattern.getPattern()}">
+    <input id="idCategory" type="hidden" th:value="${categoryId}">
+    <label th:for="'name'" th:text="'Nombre: '"/>
+    <input th:id="'name'" th:type="text" th:value="${pattern.getName()}">
+    <br/>
+    <label th:for="'pat'" th:text="'Patrón: '"/>
+    <input th:id="'pat'" th:type="text" th:value="${pattern.getPattern()}">
 </form>
 
-<button th:if="${pattern.getId() == null}" onclick="save()">
+<button th:if="${pattern.getId() == null}" onclick="create()">
     Guardar
 </button>
 
 <div th:if="${pattern.getId() != null}">
+    <button  onclick="save()">
+        Grabar Cambios
+    </button>
     <h3>
         Inflexiones
     </h3>
@@ -43,14 +47,12 @@
 
             </td>
             <td>
-                <form th:object="${inflexion}">
-                    <select th:id="'mode' + ${inflexion.getId()}" th:onchange="'activateButton(' + ${inflexion.getId()} + ')'" th:field="*{mode}">
+                    <select th:id="'mode' + ${inflexion.getId()}" th:onchange="'activateButton(' + ${inflexion.getId()} + ')'" th:value="${inflexion.getMode()}">
                         <option th:each="modo : ${modos}"
                                 th:value="${modo}"
                                 th:text="${modo.getDescription()}">
                         </option>
                     </select>
-                </form>
             </td>
             <td >
                 <input th:id="'id' + ${inflexion.getId()}" type="hidden" th:value="${inflexion.getId()}">
@@ -65,7 +67,7 @@
     </table>
 </div>
 <script>
-    async function save(){
+    async function create(){
 
         const name = document.getElementById("name").value;
         const pattern = document.getElementById("pat").value;
@@ -82,6 +84,33 @@
         })
 
         if (response.ok){
+            const pattern = await response.json()
+            window.location.replace("/patterns/detail/" + pattern.id)
+        } else {
+            alert("No se ha podido crear el patrón: " + JSON.stringify(response.status))
+        }
+
+    }
+
+    async function save(){
+
+        const name = document.getElementById("name").value;
+        const pattern = document.getElementById("pat").value;
+        const id = document.getElementById("idCategory").value;
+        const response = await fetch('http://localhost:8081/patterns/update', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: id,
+                name: name,
+                pattern: pattern
+            })
+        })
+
+        if (response.ok){
+            alert("Se ha modificado el patrón correctamente")
             const pattern = await response.json()
             window.location.replace("/patterns/detail/" + pattern.id)
         } else {
