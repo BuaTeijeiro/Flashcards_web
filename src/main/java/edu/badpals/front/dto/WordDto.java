@@ -10,6 +10,7 @@ public class WordDto {
     private DeckDto deck;
     private String word;
     private String meaning;
+    private int level;
     private CategoryDto category;
     private PatternDto pattern;
     private List<TagDto> tags;
@@ -68,5 +69,13 @@ public class WordDto {
 
     public void setTags(List<TagDto> tags) {
         this.tags = tags;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 }

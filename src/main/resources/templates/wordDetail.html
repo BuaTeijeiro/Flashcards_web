@@ -15,8 +15,12 @@
     <label th:for="'significado'" th:text="'Significado: '"/>
     <input th:id="'significado'" th:type="text" th:field="*{meaning}">
     <br/>
+    <label th:for="'level'" th:text="'Nivel: '"/>
+    <input th:id="'level'" type="number" th:field="*{level}">
+    <br/>
     <label th:for="'categoria'" th:text="'Categoría: '"/>
     <select th:id="'categoria'" onchange="reloadPatterns()" th:field="*{category}">
+        <option value = "0" th:text="''"/>
         <option th:each="category : ${categories}"
                 th:value="${category.getId()}"
                 th:text="${category.getName()}">
@@ -25,6 +29,7 @@
     <br/>
     <label th:for="'pattern'" th:text="'Patrón: '"/>
     <select th:id="'pattern'" th:field="*{pattern}">
+        <option value = "0" th:text="''"/>
         <option th:each="pattern : ${patterns}"
                 th:value="${pattern}"
                 th:text="${pattern.getName()}">
@@ -99,6 +104,7 @@
         const word = document.getElementById("word").value;
         const meaning = document.getElementById("significado").value;
         const category = document.getElementById("categoria").value;
+        const level = document.getElementById("level").value;
         const pattern = document.getElementById("pattern").value;
         const deck = document.getElementById("deckId").value;
         const response = await fetch('http://localhost:8081/words/new/', {
@@ -109,6 +115,7 @@
             body: JSON.stringify({
                 word: word,
                 meaning: meaning,
+                level: level,
                 deckId: deck,
                 categoryId: category,
                 patternId: pattern

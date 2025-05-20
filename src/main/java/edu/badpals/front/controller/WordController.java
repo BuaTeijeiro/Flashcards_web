@@ -69,7 +69,8 @@ public class WordController {
         List<CategoryDto> categories = response3.getBody();
         model.addAttribute("categories", categories);
         model.addAttribute("deckId", id);
-        model.addAttribute("patterns", categories.get(0).getPatterns());
+        if (categories.size() > 0)
+            model.addAttribute("patterns", categories.get(0).getPatterns());
         model.addAttribute("user",MainMenuController.HARDCODED_USER);
         model.addAttribute("inflections", new HashMap<>());
 

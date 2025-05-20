@@ -7,7 +7,7 @@
 <body>
     <span th:text="${deck.getName()}">
     </span>
-    <span id="deckId" th:text="${deck.getId()}"/>
+    <input id="deckId" type="hidden" th:value="${deck.getId()}"/>
     <h2 th:text="Words"/>
         <table id="words">
             <tr>
@@ -67,7 +67,61 @@
             <td th:text="${phrase.getSubstitutionRules().size()>0?'Sí':'No'}"/>
         </tr>
     </table>
+    <h2 th:text="'Alumnos'"/>
+    <table id="users">
+        <tr>
+            <th>Email</th>
+            <th>Nivel</th>
+            <th>Acción</th>
+        </tr>
+        <tr>
+        <tr>
+            <td>
+                <input id="newUser" type="text">
+            </td>
+            <th><input value="1" type="number" disabled="disabled"></th>
+            <th>
+                <button onclick="addUser()">
+                    Añadir
+                </button>
+            </th>
+        </tr>
+        </tr>
+        <tr th:each="user:${users}">
+            <td th:text="${user.getUser().getEmail()}" />
+            <td th:text="${user.getLevel()}" />
+            <td>
+                <button>
+                    Eliminar
+                </button>
+            </td>
+        </tr>
+    </table>
 <script>
+    async function addUser(){
+
+        const email = document.getElementById("newUser").value;
+        const deck = document.getElementById("deckId").value;
+        const level = 1;
+        const response = await fetch('http://localhost:8081/decks/users/add', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userEmail: email,
+                deckId: deck,
+                level: level
+            })
+        });
+
+        if (response.ok){
+            window.location.reload();
+        } else {
+            alert("No se ha podido añadir al usuario")
+        }
+    }
+
     function addWord(){
         const deckId = document.getElementById("deckId").value;
         const word = document.getElementById("newWord").value;
