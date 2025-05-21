@@ -22,14 +22,20 @@
 
             </td>
             <td>
-                <button onclick="saveTag()">
+                <button onclick="createTag()">
                     Guardar
                 </button>
             </td>
         </tr>
-        <tr th:each="tag:${tags}" >
-            <td th:text="${tag.getTag()}"/>
+        <tr th:each="tag:${tags}" th:id="'row' + ${tag.getId()}">
             <td>
+                <input th:id="'id' + ${tag.getId()}" type = "hidden" th:value="${tag.getId()}"/>
+                <input th:id="'tag' + ${tag.getId()}" type="text" th:value="${tag.getTag()}" th:onchange="'activateButton(' + ${tag.getId()} + ')'"/>
+            </td>
+            <td>
+                <button th:id="'saveTag' + ${tag.getId()}" th:onclick="'saveTag(' + ${tag.getId()} + ')'" th:disabled="'disabled'">
+                    Grabar Cambios
+                </button>
                 <button th:onclick="'deleteTag(' + ${tag.id} + ')'">
                     Eliminar
                 </button>
@@ -37,17 +43,17 @@
         </tr>
     </table>
     <script>
-        async function saveTag(){
-
+        async function createTag(){
             const tag = document.getElementById("newTag").value;
             const user = document.getElementById("loggedUser").value;
-            const response = await fetch('http://localhost:8081/tags/new/' + user, {
+            const response = await fetch('http://localhost:8081/tags/new', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    tag: tag
+                    tag: tag,
+                    ownerId: user
                 })
             })
 
@@ -59,17 +65,60 @@
 
         }
 
-        async function deleteTag(tag){
-            const response = await fetch('http://localhost:8081/tags/delete/' + tag, {
-                method: 'DELETE',
+        async function saveTag(id){
+            const tag = document.getElementById("tag" + id).value;
+            const response = await fetch('http://localhost:8081/tags/update', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    tag: tag,
+                    id: id
+                })
             })
             if (response.ok){
-                window.location.reload()
+                deactivateButton(id)
+                alert("Se ha guardado correctamente")
             } else {
-                alert("No se ha podido eliminar la etiqueta")
+                alert("No se ha podido guardar la etiqueta")
             }
 
         }
+
+        async function deleteTag(id) {
+            if (confirm("Está seguro de que quiere borrar la etiqueta?")) {
+
+                const response = await fetch('http://localhost:8081/tags/delete', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: id
+                    })
+                })
+                if (response.ok) {
+                    document.getElementById("row" + id).remove();
+                    alert("Se ha eliminado la etiqueta correctamente")
+                } else {
+                    alert("No se ha podido eliminar la etiqueta")
+                }
+            }
+
+        }
+
+        function activateButton(id){
+            const button = document.getElementById("saveTag" + id);
+            button.disabled = false;
+        }
+
+        function deactivateButton(id){
+            const button = document.getElementById("saveTag" + id);
+            button.disabled = true;
+        }
+
+
     </script>
 </body>
 </html>

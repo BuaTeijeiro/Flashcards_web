@@ -5,35 +5,242 @@
     <title>Title</title>
 </head>
 <body>
-<h2>Detalles de Frase:</h2>
-<p th:text="'Frase: ' + ${phrase.getPhrase()}"></p>
+<script>
+    async function save(){
 
-<h3>
-    Reglas de Sustitucion
-</h3>
-<table>
-    <tr>
-        <th>
-            Palabra
-        </th>
-        <th>
-            Inflexión
-        </th>
-        <th>
-            Tags
-        </th>
-    </tr>
-    <tr th:each="rule:${phrase.getSubstitutionRules()}" >
-        <td th:text="${rule.getWord()}"></td>
-        <td th:text="${rule.getInflection().getInflection()}"></td>
-        <td>
-            <ul>
-                <li th:each="tag:${rule.getTags()}"/>
-            </ul>
-        </td>
+        const phrase = document.getElementById("phrase").value;
+        const meaning = document.getElementById("meaning").value;
+        const level = document.getElementById("level").value;
+        const id = document.getElementById("id").value;
+        const response = await fetch('http://localhost:8081/phrases/update', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                phrase: phrase,
+                meaning: meaning,
+                level: level,
+                id: id
+            })
+        });
 
-    </tr>
-</table>
+        if (response.ok){
+            alert("Se ha modificado correctamente");
+            window.location.reload();
+        } else {
+            alert("No se ha podido crear la palabra");
+        }
+
+    }
+
+    async function createRule(){
+        const category = document.getElementById("category0").value;
+        const inflection = document.getElementById("inflection0").value;
+        alert(category);
+        alert(inflection);
+        const word = document.getElementById("newWord").value;
+        const id = document.getElementById("id").value;
+        const response = await fetch('http://localhost:8081/substitution-rules/new', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                word: word,
+                inflectionName: inflection,
+                phraseId: id,
+                categoryId: category
+            })
+        })
+
+        if (response.ok){
+            window.location.reload();
+        } else {
+            alert("No se ha podido guardar la regla de sustitución");
+        }
+
+    }
+
+    async function updateRule(id){
+        const category = document.getElementById("category" + id).value;
+        const inflection = document.getElementById("inflection" + id).value;
+        const word = document.getElementById("word" + id).value;
+        const response = await fetch('http://localhost:8081/substitution-rules/update', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: id,
+                word: word,
+                inflectionName: inflection,
+                categoryId: category
+            })
+        });
+
+        if (response.ok){
+            alert("Se ha modificado correctamente");
+            deactivateButton("saveRule" + id);
+        } else {
+            alert("No se ha podido modificar")
+        }
+    }
+
+    async function deleteRule(id){
+        if (confirm("Está seguro de que quiere eliminar la regla de sustitución?")) {
+            const response = await fetch('http://localhost:8081/substitution-rules/delete', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id: id,
+                })
+            });
+            if (response.ok){
+                alert("Se ha eliminado correctamente");
+                document.getElementById("row"+id).remove();
+
+            } else {
+                alert("No se ha podido eliminar la regla de sustitución. Error: " + response.status)
+            }
+        }
+    }
+
+    async function reloadPatterns(id){
+
+        const categoryId = document.getElementById("category" + id).value;
+
+        const response = await fetch('http://localhost:8081/categories/detail/' + categoryId, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        if (response.ok){
+            const category = await response.json();
+            loadPatterns(category.inflectionsNames, id);
+        } else {
+            alert("No se ha podido recargar el combo box: " + JSON.stringify(response.status))
+        }
+    }
+
+
+    function loadPatterns(inflections, id){
+        const select = document.getElementById('inflection' + id);
+        select.innerHTML="";
+        inflections.forEach(function (inflection){
+            const option = document.createElement("option");
+            option.value = inflection;
+            option.text = inflection;
+            select.appendChild(option);
+        });
+    }
+
+</script>
+<form>
+
+    <input id="loggedUser" type="hidden" th:value="${user}">
+    <input id="id" type="hidden" th:value="${phrase.getId()}">
+    <label th:for="'phrase'" th:text="'Frase: '"/>
+    <input th:id="'phrase'" th:type="'text'" th:value="${phrase.getPhrase()}">
+    <br/>
+    <label th:for="'meaning'" th:text="'Idioma: '"/>
+    <input th:id="'meaning'" th:type="'text'" th:value="${phrase.getMeaning()}">
+    <br/>
+    <label th:for="'level'" th:text="'Nivel: '"/>
+    <input th:id="'level'" type="number" th:value="${phrase.getLevel()}">
+    <br/>
+    <button type="button" onclick="save()">
+        Grabar Cambios
+    </button>
+</form>
+
+<div>
+    <table>
+        <tr>
+            <th>
+                Palabra
+            </th>
+            <th>
+                Categoría
+            </th>
+            <th>
+                Inflexión
+            </th>
+            <th>
+                Etiquetas
+            </th>
+        </tr>
+        <tr>
+            <td>
+                <select th:id="'newWord'">
+                    <option th:each="word : ${phrase.getPhrase().split(' ')}"
+                            th:value="${word}"
+                            th:text="${word}">
+                    </option>
+                </select>
+            </td>
+            <td>
+                <select th:id="'category0'" th:value="''" th:onchange="'reloadPatterns(0);'">
+                    <option value = "0" th:text="''"/>
+                    <option th:each="category : ${categories}"
+                            th:value="${category.getId()}"
+                            th:text="${category.getName()}">
+                    </option>
+                </select>
+            </td>
+            <td>
+                <select th:id="'inflection0'">
+                    <option value = "" th:text="''"/>
+                </select>
+            </td>
+            <td>
+                <button onclick="createRule()">
+                    Añadir
+                </button>
+            </td>
+        </tr>
+        <tr th:each="rule :${phrase.getSubstitutionRules()}" th:id="'row' + ${rule.getId()}">
+            <td >
+                <input th:id="'id' + ${rule.getId()}" type="hidden" th:value="${rule.getId()}">
+                <select th:id="'word' + ${rule.getId()}" th:onchange="'activateRuleButton(' + ${rule.getId()} + ')'" th:value="${rule.getWord()}">
+                    <option th:each="word : ${phrase.getPhrase().split(' ')}"
+                            th:value="${word}"
+                            th:text="${word}">
+                    </option>
+                </select>
+            </td>
+            <td >
+                <select th:id="'category' + ${rule.getId()}" th:onchange="'reloadPatterns(' + ${rule.getId()} + ');' + 'activateRuleButton(' + ${rule.getId()} + ')'" th:value="${rule.getCategory().getId()}">
+                    <option value = "0" th:text="''"/>
+                    <option th:each="category : ${categories}"
+                            th:value="${category.getId()}"
+                            th:text="${category.getName()}">
+                    </option>
+                </select>
+            </td>
+            <td >
+                <select th:id="'inflection' + ${rule.getId()}" th:onchange="'reloadPatterns(' + ${rule.getId()} + ');'" th:value="${rule.getInflectionName()}">
+                    <option value = "" th:text="''"/>
+                    <option th:each="inflection : ${rule.getCategory().getInflectionsNames()}"
+                            th:value="${inflection}"
+                            th:text="${inflection}">
+                    </option>
+                </select>
+            </td>
+            <td>
+                <button th:id="'saveRule' + ${rule.getId()}" th:onclick="'updateRule(' + ${rule.getId()} + ')'" th:disabled="'disabled'">
+                    Grabar Cambios
+                </button>
+                <button th:onclick="'deleteRule(' + ${rule.getId()} + ')'">
+                    Eliminar
+                </button>
+            </td>
+        </tr>
+    </table>
+</div>
 
 </body>
 </html>

@@ -8,6 +8,8 @@ import java.util.List;
 public class PhraseDto {
     private long id;
     private String phrase;
+    private String meaning;
+    private int level;
     private List<SubstitutionRuleDto> substitutionRules;
 
     public long getId() {
@@ -32,5 +34,21 @@ public class PhraseDto {
 
     public void setSubstitutionRules(List<SubstitutionRuleDto> substitutionRules) {
         this.substitutionRules = substitutionRules;
+    }
+
+    public String getMeaning() {
+        return meaning;
+    }
+
+    public void setMeaning(String meaning) {
+        this.meaning = meaning;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 }

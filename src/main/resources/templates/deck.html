@@ -25,8 +25,29 @@
             Grabar Cambios
         </button>
         <br/>
-        <h2 th:text="Words"/>
-        <table id="words">
+
+        <ul>
+            <li >
+                <button onclick="changeMenu('words')">
+                    Palabras
+                </button>
+            </li>
+            <li>
+                <button onclick="changeMenu('phrases')">
+                    Frases
+                </button>
+
+            </li>
+            <li>
+                <button onclick="changeMenu('students')">
+                    Alumnos
+                </button>
+            </li>
+        </ul>
+
+        <div id="words" style="display: none">
+        <h2 th:text="'Palabras'"/>
+        <table>
             <tr>
                 <th>Palabra</th>
                 <th>Significado</th>
@@ -42,10 +63,10 @@
                     <input id="newMeaning" name="meaning" type="text"/>
                 </td>
                 <td>
-                    <input id="newLevel" name="level" type="number"/>
+                    <input id="newLevel" name="level" type="number" value="1"/>
                 </td>
                 <td>
-                        <button onclick="addWord()">
+                        <button onclick="createWord()">
                             Añadir
                         </button>
                 </td>
@@ -74,26 +95,68 @@
                 </td>
             </tr>
         </table>
-    <h2 th:text="'Frases'"/>
-    <table id="phrases">
-        <tr>
-            <th>Phrase</th>
-            <th>Tiene Reglas de Sustitución?</th>
-        </tr>
-        <tr>
+        </div>
+        <div id="phrases" >
 
+
+    <h2 th:text="'Frases'"/>
+    <table >
+        <tr>
+            <th>Frase</th>
+            <th>Significado</th>
+            <th>Nivel</th>
+            <th>Tiene Reglas de Sustitución?</th>
+            <th>Acción</th>
         </tr>
-        <tr th:each="phrase:${deck.getPhrases()}">
+        <tr>
+            <td>
+                <input id="newPhrase" name="word" type="text"/>
+            </td>
+            <td>
+                <input id="newPhraseMeaning" name="meaning" type="text"/>
+            </td>
+            <td>
+                <input id="newPhraseLevel" name="level" type="number" value="1"/>
+            </td>
+            <td>
+
+            </td>
+            <td>
+                <button onclick="createPhrase()">
+                    Añadir
+                </button>
+            </td>
+        </tr>
+        <tr th:each="phrase:${deck.getPhrases()}" th:id="'rowPhrase' + ${phrase.getId()}">
             <td >
-                <a th:href="@{/phrases/detail/{id}(id = ${phrase.getId()})}">
-                    <span th:text="${phrase.getPhrase()}"/>
-                </a>
+                <input th:id="'id' + ${phrase.getId()}" type="hidden" th:value="${phrase.getId()}">
+                <input th:id="'phrase' + ${phrase.getId()}" th:onchange="'activatePhraseButton(' + ${phrase.getId()} + ')'" type="text" th:value="${phrase.getPhrase()}"/>
+            </td>
+            <td >
+                <input th:id="'meaning' + ${phrase.getId()}" th:onchange="'activatePhraseButton(' + ${phrase.getId()} + ')'" type="text" th:value="${phrase.getMeaning()}"/>
+            </td>
+            <td >
+                <input th:id="'level' + ${phrase.getId()}" th:onchange="'activatePhraseButton(' + ${phrase.getId()} + ')'" type="number" th:value="${phrase.getLevel()}"/>
             </td>
             <td th:text="${phrase.getSubstitutionRules().size()>0?'Sí':'No'}"/>
+            <td>
+                <button th:id="'savePhrase' + ${phrase.getId()}" th:onclick="'updatePhrase(' + ${phrase.getId()} + ')'" th:disabled="'disabled'">
+                    Grabar Cambios
+                </button>
+                <button th:onclick="'seePhrase(' + ${phrase.getId()} + ')'">
+                    Detalles
+                </button>
+                <button th:onclick="'deletePhrase(' + ${phrase.getId()} + ')'">
+                    Eliminar
+                </button>
+            </td>
         </tr>
     </table>
+        </div>
+        <div id="students" style="display: none">
     <h2 th:text="'Alumnos'"/>
-    <table id="users">
+
+    <table >
         <tr>
             <th>Email</th>
             <th>Nivel</th>
@@ -130,8 +193,20 @@
             </td>
         </tr>
     </table>
+        </div>
     </div>
 <script>
+    function changeMenu(id) {
+        const menus = ["phrases", "students", "words"];
+        menus.forEach(function (menu){
+            if (menu == id){
+                document.getElementById(menu).setAttribute("style", "display: block");
+            } else {
+                document.getElementById(menu).setAttribute("style", "display: none");
+            }
+        });
+    }
+
     async function addUser(){
 
         const email = document.getElementById("newUser").value;
@@ -156,7 +231,7 @@
         }
     }
 
-    async function addWord(){
+    async function createWord(){
         const deckId = document.getElementById("deckId").value;
         const word = document.getElementById("newWord").value;
         const meaning = document.getElementById("newMeaning").value;
@@ -226,6 +301,82 @@
 
             } else {
                 alert("No se ha podido eliminar la palabra. Error: " + response.status)
+            }
+        }
+    }
+
+    async function createPhrase(){
+        const deckId = document.getElementById("deckId").value;
+        const phrase = document.getElementById("newPhrase").value;
+        const meaning = document.getElementById("newPhraseMeaning").value;
+        const level = document.getElementById("newPhraseLevel").value;
+        const response = await fetch('http://localhost:8081/phrases/new', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                phrase: phrase,
+                meaning: meaning,
+                deckId: deckId,
+                level: level
+            })
+        })
+
+        if (response.ok){
+            window.location.reload();
+        } else {
+            alert("Error al crear la frase");
+        }
+
+    }
+
+    function seePhrase(id){
+        window.location.replace("/phrases/detail/" + id);
+    }
+
+    async function updatePhrase(id){
+        const phrase = document.getElementById("phrase" + id).value;
+        const meaning = document.getElementById("meaning" + id).value;
+        const level = document.getElementById("level" + id).value;
+        const response = await fetch('http://localhost:8081/phrases/update', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: id,
+                phrase: phrase,
+                meaning: meaning,
+                level: level
+            })
+        });
+
+        if (response.ok){
+            alert("Se ha modificado correctamente");
+            deactivateButton("savePhrase" + id);
+        } else {
+            alert("No se ha podido modificar")
+        }
+    }
+
+    async function deletePhrase(id){
+        if (confirm("Está seguro de que quiere eliminar la frase?")) {
+            const response = await fetch('http://localhost:8081/phrases/delete', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id: id,
+                })
+            });
+            if (response.ok){
+                alert("Se ha eliminado correctamente");
+                document.getElementById("rowPhrase"+id).remove();
+
+            } else {
+                alert("No se ha podido eliminar la frase. Error: " + response.status)
             }
         }
     }
@@ -317,11 +468,15 @@
     }
 
     function activateWordButton(id){
-        activateButton("saveWord" + id);
+        activateButton("savephrase" + id);
     }
 
     function activateUserButton(id){
         activateButton("saveUser" + id);
+    }
+
+    function activatePhraseButton(id){
+        activateButton("savePhrase" + id);
     }
 </script>
 </body>

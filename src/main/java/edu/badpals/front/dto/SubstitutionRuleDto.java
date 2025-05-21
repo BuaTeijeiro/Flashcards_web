@@ -10,7 +10,7 @@ public class SubstitutionRuleDto {
     private String word;
     private List<TagDto> tags;
     private CategoryDto category;
-    private InflectionDto inflection;
+    private String inflectionName;
 
     public long getId() {
         return id;
@@ -44,11 +44,11 @@ public class SubstitutionRuleDto {
         this.category = category;
     }
 
-    public InflectionDto getInflection() {
-        return inflection;
+    public String getInflectionName() {
+        return inflectionName;
     }
 
-    public void setInflection(InflectionDto inflection) {
-        this.inflection = inflection;
+    public void setInflectionName(String inflectionName) {
+        this.inflectionName = inflectionName;
     }
 }

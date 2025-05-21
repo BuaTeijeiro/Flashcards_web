@@ -1,5 +1,6 @@
 package edu.badpals.front.controller;
 
+import edu.badpals.front.dto.CategoryDto;
 import edu.badpals.front.dto.PhraseDto;
 import edu.badpals.front.dto.WordDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -31,7 +33,17 @@ public class PhraseController {
         );
         PhraseDto phrase = response.getBody();
         model.addAttribute("phrase", phrase);
+
+        ResponseEntity<List<CategoryDto>> responseCategories = restTemplate.exchange(
+                "http://localhost:8081/categories/all/" +  MainMenuController.HARDCODED_USER,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<CategoryDto>>() {}
+        );
+        List<CategoryDto> categories = responseCategories.getBody();
+        model.addAttribute("phrase", phrase);
         model.addAttribute("user",MainMenuController.HARDCODED_USER);
+        model.addAttribute("categories", categories);
 
         return "phraseDetail";
     }
