@@ -1,7 +1,6 @@
 package edu.badpals.front.controller;
 
 import edu.badpals.front.dto.CategoryDto;
-import edu.badpals.front.dto.PatternDto;
 import edu.badpals.front.dto.WordDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -20,13 +19,13 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/words/")
+@RequestMapping("/manage/{user}/words/")
 public class WordController {
     @Autowired
     private RestTemplate restTemplate;
 
     @GetMapping("/detail/{id}")
-    public String getWord(@PathVariable long id, Model model){
+    public String getWord(@PathVariable long user, @PathVariable long id, Model model){
         ResponseEntity<WordDto> response = restTemplate.exchange(
                 "http://localhost:8081/words/detail/" + id,
                 HttpMethod.GET,
@@ -36,7 +35,7 @@ public class WordController {
         WordDto word = response.getBody();
         model.addAttribute("word", word);
         ResponseEntity<List<CategoryDto>> response3 = restTemplate.exchange(
-                "http://localhost:8081/categories/all/" + MainMenuController.HARDCODED_USER,
+                "http://localhost:8081/categories/all/" + user,
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<List<CategoryDto>>() {}
@@ -49,7 +48,7 @@ public class WordController {
         } else {
             model.addAttribute("patterns" , new ArrayList<>());
         }
-        model.addAttribute("user",MainMenuController.HARDCODED_USER);
+        model.addAttribute("user", user);
         ResponseEntity<Map<String,String>> response2 = restTemplate.exchange(
                 "http://localhost:8081/words/full-inflected/" + id,
                 HttpMethod.GET,
@@ -63,10 +62,10 @@ public class WordController {
     }
 
     @GetMapping("/new/{id}")
-    public String newWord(@PathVariable long id, Model model){
+    public String newWord(@PathVariable long user, @PathVariable long id, Model model){
         model.addAttribute("word", new WordDto());
         ResponseEntity<List<CategoryDto>> response3 = restTemplate.exchange(
-                "http://localhost:8081/categories/all/" + MainMenuController.HARDCODED_USER,
+                "http://localhost:8081/categories/all/" + user,
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<List<CategoryDto>>() {}
@@ -76,7 +75,7 @@ public class WordController {
         model.addAttribute("deckId", id);
         if (categories.size() > 0)
             model.addAttribute("patterns", categories.get(0).getPatterns());
-        model.addAttribute("user",MainMenuController.HARDCODED_USER);
+        model.addAttribute("user", user);
         model.addAttribute("inflections", new HashMap<>());
 
         return "wordDetail";

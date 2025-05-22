@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" xmlns:th="http://www.thymeleaf.org">
     <title>Main Menu</title>
 </head>
 <body>
+    <h2 th:text="'Bienvenido ' + ${userName}"></h2>
     <li>
-        <a href="/decks/">
+        <a th:href="@{/manage/{user}/decks/all(user = ${userId})}">
             Administrar Conjuntos
         </a>
     </li>
@@ -20,5 +21,10 @@
             Administrar Gramática
         </a>
     </li>
+    <button>
+        <a href="/logout">
+            Cerrar Sesión
+        </a>
+    </button>
 </body>
 </html>

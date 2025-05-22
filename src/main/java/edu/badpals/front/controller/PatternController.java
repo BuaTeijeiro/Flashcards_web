@@ -1,6 +1,5 @@
 package edu.badpals.front.controller;
 
-import edu.badpals.front.dto.CategoryDto;
 import edu.badpals.front.dto.InflectionMode;
 import edu.badpals.front.dto.PatternDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 
 @Controller
-@RequestMapping("/patterns/")
+@RequestMapping("/manage/{user}/patterns/")
 public class PatternController {
     @Autowired
     private RestTemplate restTemplate;
 
     @GetMapping("/detail/{id}")
-    public String getPattern(@PathVariable long id, Model model){
+    public String getPattern(@PathVariable long user, @PathVariable long id, Model model){
         ResponseEntity<PatternDto> response = restTemplate.exchange(
                 "http://localhost:8081/patterns/detail/" + id,
                 HttpMethod.GET,
@@ -32,7 +31,7 @@ public class PatternController {
         model.addAttribute("pattern", pattern);
         model.addAttribute("modos", InflectionMode.values());
         model.addAttribute("categoryId", id);
-        model.addAttribute("user",MainMenuController.HARDCODED_USER);
+        model.addAttribute("user", user);
 
         return "patternDetail";
     }

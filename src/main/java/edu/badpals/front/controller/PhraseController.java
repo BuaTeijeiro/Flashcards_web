@@ -2,7 +2,6 @@ package edu.badpals.front.controller;
 
 import edu.badpals.front.dto.CategoryDto;
 import edu.badpals.front.dto.PhraseDto;
-import edu.badpals.front.dto.WordDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -15,16 +14,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
-import java.util.Map;
 
 @Controller
-@RequestMapping("/phrases/")
+@RequestMapping("/manage/{user}/phrase")
 public class PhraseController {
     @Autowired
     private RestTemplate restTemplate;
 
     @GetMapping("/detail/{id}")
-    public String getPattern(@PathVariable long id, Model model){
+    public String getPattern(@PathVariable long user, @PathVariable long id, Model model){
         ResponseEntity<PhraseDto> response = restTemplate.exchange(
                 "http://localhost:8081/phrases/detail/" + id,
                 HttpMethod.GET,
@@ -35,14 +33,14 @@ public class PhraseController {
         model.addAttribute("phrase", phrase);
 
         ResponseEntity<List<CategoryDto>> responseCategories = restTemplate.exchange(
-                "http://localhost:8081/categories/all/" +  MainMenuController.HARDCODED_USER,
+                "http://localhost:8081/categories/all/" +  user,
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<List<CategoryDto>>() {}
         );
         List<CategoryDto> categories = responseCategories.getBody();
         model.addAttribute("phrase", phrase);
-        model.addAttribute("user",MainMenuController.HARDCODED_USER);
+        model.addAttribute("user", user);
         model.addAttribute("categories", categories);
 
         return "phraseDetail";

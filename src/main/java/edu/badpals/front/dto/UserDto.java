@@ -4,6 +4,7 @@ public class UserDto {
     private long id;
     private String username;
     private String email;
+    private String password;
     private int user_type;
 
     public long getId() {
@@ -36,5 +37,13 @@ public class UserDto {
 
     public void setUser_type(int user_type) {
         this.user_type = user_type;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

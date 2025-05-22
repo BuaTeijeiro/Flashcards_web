@@ -2,6 +2,7 @@ package edu.badpals.front.controller;
 
 import edu.badpals.front.dto.CategoryDto;
 import jakarta.servlet.http.HttpSession;
+import jakarta.websocket.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -16,27 +17,30 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 
 @Controller
-@RequestMapping("/categories/")
+@RequestMapping("/manage/{user}/categories")
 public class CategoryController {
     @Autowired
     private RestTemplate restTemplate;
+    @Autowired
+    private UserController userController;
+
     @GetMapping("/all")
-    public String getAllCategories(HttpSession session, Model model){
+    public String getAllCategories(@PathVariable long user, Model model){
         ResponseEntity<List<CategoryDto>> response = restTemplate.exchange(
-                "http://localhost:8081/categories/all/" + MainMenuController.HARDCODED_USER,
+                "http://localhost:8081/categories/all/" + user,
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<List<CategoryDto>>() {}
         );
-        List<CategoryDto> cattegories = response.getBody();
-        model.addAttribute("categories", cattegories);
-        model.addAttribute("user",MainMenuController.HARDCODED_USER);
+        List<CategoryDto> categories = response.getBody();
+        model.addAttribute("categories", categories);
+        model.addAttribute("user", user);
 
         return "categories";
     }
 
-    @GetMapping("/detail/{id}")
-    public String getCategory(@PathVariable long id,Model model){
+    @GetMapping("/{id}")
+    public String getCategory(@PathVariable long user, @PathVariable long id,Model model){
         ResponseEntity<CategoryDto> response = restTemplate.exchange(
                 "http://localhost:8081/categories/detail/" + id,
                 HttpMethod.GET,
@@ -45,15 +49,14 @@ public class CategoryController {
         );
         CategoryDto cattegory = response.getBody();
         model.addAttribute("category", cattegory);
-        model.addAttribute("user",MainMenuController.HARDCODED_USER);
-
+        model.addAttribute("user", user);
         return "categoryDetail";
     }
 
     @GetMapping("/new")
-    public String newCategory(Model model){
+    public String newCategory(@PathVariable long user, Model model){
         model.addAttribute("category", new CategoryDto());
-        model.addAttribute("user",MainMenuController.HARDCODED_USER);
+        model.addAttribute("user",user);
 
         return "categoryDetail";
     }
