@@ -45,7 +45,7 @@ public class UserController {
             return "redirect:/menu";
         } catch (HttpClientErrorException e){
             model.addAttribute("message", "Email o constraseña no válidos");
-            return "login";
+            return "redirect:/login";
         }
 
     }

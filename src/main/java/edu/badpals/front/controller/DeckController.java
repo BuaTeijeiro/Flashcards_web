@@ -1,5 +1,6 @@
 package edu.badpals.front.controller;
 
+import edu.badpals.front.dto.CategoryDto;
 import edu.badpals.front.dto.DeckDto;
 import edu.badpals.front.dto.DeckUserDto;
 import jakarta.servlet.http.HttpSession;
@@ -21,6 +22,7 @@ import java.util.List;
 @RequestMapping("/manage/{user}/decks")
 public class DeckController {
 
+    public static final String DECK_LANGUAGE = "deckLanguage";
     @Autowired
     private RestTemplate restTemplate;
 
@@ -39,7 +41,7 @@ public class DeckController {
     }
 
     @GetMapping("/{id}")
-    public String showDeck(@PathVariable long user, Model model, @PathVariable long id){
+    public String showDeck(@PathVariable long user, Model model, @PathVariable long id, HttpSession session){
         ResponseEntity<DeckDto> response = restTemplate.exchange(
                 "http://localhost:8081/decks/data/"+id,
                 HttpMethod.GET,
@@ -47,6 +49,16 @@ public class DeckController {
                 new ParameterizedTypeReference<DeckDto>() {}
         );
         DeckDto deck = response.getBody();
+        String language = deck.getLanguage()!=null? deck.getLanguage() : "";
+        session.setAttribute(DECK_LANGUAGE, language);
+        ResponseEntity<List<CategoryDto>> responseCategories = restTemplate.exchange(
+                "http://localhost:8081/categories/all/"+id + "?language=" +  language,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<CategoryDto>>() {}
+        );
+        List<CategoryDto> categories = responseCategories.getBody();
+        model.addAttribute("categories", categories);
 
         model.addAttribute("deck", deck);
         ResponseEntity<List<DeckUserDto>> responseUsers = restTemplate.exchange(
@@ -64,12 +76,12 @@ public class DeckController {
         return "deck";
     }
 
-    @GetMapping("/new/{id}")
-    public String newDeck(@PathVariable long id,  Model model){
+    @GetMapping("/new")
+    public String newDeck(@PathVariable long user,  Model model){
         model.addAttribute("deck", new DeckDto());
         List<DeckUserDto> users = new ArrayList<>();
         model.addAttribute("users",users);
-        model.addAttribute("owner",id);
+        model.addAttribute("owner",user);
         return "deck";
     }
 }

@@ -2,10 +2,12 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head >
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Detalle de Palabra</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<h2>Detalles de Palabra</h2>
+<div class="container">
+<h1>Detalle de Palabra</h1>
 <form th:object="${word}">
 <!--    <input id="deck" type="hidden" th:value="${word.getDeck().getId()}">-->
     <input th:id="'deckId'" type="hidden" th:value="${deckId}">
@@ -22,7 +24,7 @@
     <select th:id="'categoria'" onchange="reloadPatterns()" th:field="*{category}">
         <option value = "0" th:text="''"/>
         <option th:each="category : ${categories}"
-                th:value="${category.getId()}"
+                th:value="${category}"
                 th:text="${category.getName()}">
         </option>
     </select>
@@ -68,6 +70,7 @@
             <td th:text="${inflection.getValue()}"></td>
         </tr>
     </table>
+</div>
 </div>
 <script>
     async function reloadPatterns(){

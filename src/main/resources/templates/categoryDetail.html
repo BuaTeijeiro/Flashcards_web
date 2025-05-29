@@ -2,10 +2,12 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head >
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Editar Categoría</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<h2>Detalles de Categoría</h2>
+<div class="container">
+<h1>Editar Categoría</h1>
 <form>
     <label th:for="'name'" th:text="'Nombre: '"/>
     <input id="loggedUser" type="hidden" th:value="${user}">
@@ -47,13 +49,13 @@
             </button>
         </td>
     </tr>
-    <tr th:each="inflection:${category.getInflectionsNames()}" >
-        <td th:text="${inflection}" th/>
-<!--        <td>-->
-<!--            <button th:onclick="'deleteInflection(\'' + ${inflection} + '\')'">-->
-<!--                Eliminar-->
-<!--            </button>-->
-<!--        </td>-->
+    <tr th:each="inflection, iterStat :${category.getInflectionsNames()}" >
+        <td th:id = "'inflection' + ${iterStat.index}"  th:text="${inflection}"/>
+        <td>
+            <button th:onclick="'deleteInflection(\'' + ${iterStat.index} + '\')'">
+                Eliminar
+            </button>
+        </td>
     </tr>
 </table>
 <h3>
@@ -71,7 +73,7 @@
     <tr>
         <td colspan="2">
             <button>
-                <a th:href="@{/patterns/new/{id}(id = ${category.getId()})}" $>
+                <a th:href="@{/manage/{user}/patterns/new/{idCategory}(user = ${user}, idCategory = ${category.getId()})}" $>
                     <span th:text="'Nuevo'"/>
                 </a>
             </button>
@@ -79,11 +81,16 @@
     </tr>
     <tr th:each="pattern:${category.getPatterns()}" th:id="'rowPattern' + ${pattern.getId()}">
         <td>
-            <a th:href="@{/patterns/detail/{id}(id = ${pattern.getId()})}" $>
-                <span th:text="${pattern.getName()}"/>
-            </a>
+            <span th:text="${pattern.getName()}"/>
         </td>
         <td>
+
+            <a th:href="@{/manage/{user}/patterns/detail/{id}(user = ${user}, id = ${pattern.getId()})}" $>
+                <button>
+                    Detalles
+                </button>
+            </a>
+
             <button th:onclick="'removePattern(' + ${pattern.getId()} + ')'">
                 Eliminar
             </button>
@@ -91,6 +98,7 @@
 
     </tr>
 </table>
+</div>
 </div>
 <script>
     async function create(){
@@ -111,7 +119,8 @@
 
         if (response.ok){
             const category = await response.json()
-            window.location.replace("/categories/detail/" + category.id)
+            const user = document.getElementById("loggedUser").value;
+            window.location.replace("/manage/" + user + "/categories/" + category.id)
         } else {
             alert("No se ha podido crear la categoría")
         }
@@ -183,22 +192,25 @@
         }
     }
 
-    async function deleteInflection(name){
-        const cat = document.getElementById("idCategory").value;
-        const response = await fetch('http://localhost:8081/categories/deleteInflection/' + cat +"?oldInflection=" + name, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
+    async function deleteInflection(id) {
+        if (confirm("Está seguro de que quiere borrar la etiqueta?")) {
+            const cat = document.getElementById("idCategory").value;
+            const inflection = document.getElementById("inflection" + id).textContent;
+            const response = await fetch('http://localhost:8081/categories/deleteInflection/' + cat + "?deleteInflection=" + inflection, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+
+            if (response.ok) {
+                const category = await response.json()
+                window.location.reload();
+            } else {
+                alert("No se ha podido eliminar la inflexión")
             }
-        })
 
-        if (response.ok){
-            const category = await response.json()
-            window.location.reload();
-        } else {
-            alert("No se ha podido eliminar la inflexión")
         }
-
     }
 </script>
 </body>

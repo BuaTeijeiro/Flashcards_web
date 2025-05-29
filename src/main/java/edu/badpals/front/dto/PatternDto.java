@@ -1,6 +1,7 @@
 package edu.badpals.front.dto;
 
 import java.util.List;
+import java.util.Objects;
 
 public class PatternDto {
     private Long Id;
@@ -38,5 +39,17 @@ public class PatternDto {
 
     public void setInflections(List<InflectionDto> inflections) {
         this.inflections = inflections;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PatternDto that)) return false;
+        return Objects.equals(Id, that.Id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(Id);
     }
 }

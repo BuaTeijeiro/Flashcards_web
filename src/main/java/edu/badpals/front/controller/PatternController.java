@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 
 @Controller
-@RequestMapping("/manage/{user}/patterns/")
+@RequestMapping("/manage/{user}/patterns")
 public class PatternController {
     @Autowired
     private RestTemplate restTemplate;
@@ -36,12 +36,11 @@ public class PatternController {
         return "patternDetail";
     }
 
-    @GetMapping("/new/{id}")
-    public String newCategory(Model model, @PathVariable long id){
+    @GetMapping("/new/{idCategory}")
+    public String newCategory(Model model, @PathVariable long idCategory){
         model.addAttribute("pattern", new PatternDto());
-        model.addAttribute("category", id);
-        model.addAttribute("categoryId", id);
-
+        model.addAttribute("category", idCategory);
+        model.addAttribute("categoryId", idCategory);
         return "patternDetail";
     }
 }

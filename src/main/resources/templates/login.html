@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Log In</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
 </head>
 <body>
+<div class="container">
     <form action="/login/submit" method="post">
         <label for="email">Email: </label>
         <input name="email" type="text" id="email">
@@ -19,7 +21,7 @@
             Iniciar Sesión
         </button>
     </form>
-
+</div>
 <script>
 </script>
 </body>

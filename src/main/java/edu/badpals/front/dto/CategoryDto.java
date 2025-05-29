@@ -1,6 +1,7 @@
 package edu.badpals.front.dto;
 
 import java.util.List;
+import java.util.Objects;
 
 public class CategoryDto {
     private Long id;
@@ -47,5 +48,17 @@ public class CategoryDto {
 
     public void setLanguage(String language) {
         this.language = language;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CategoryDto that)) return false;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

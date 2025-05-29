@@ -2,14 +2,19 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head >
     <meta charset="UTF-8">
-    <title>Categorías Gramaticales</title>
+    <title>Consultar Categorías</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<h2>CATEGORÍAS</h2>
+<div class="container">
+<h2>Listado de Categorías Gramaticales</h2>
 <table>
     <tr>
         <th>
             Categoría
+        </th>
+        <th>
+            Idioma
         </th>
         <th>
             Nº patrones
@@ -22,9 +27,9 @@
         </th>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="5">
             <button>
-                <a th:href="@{/categories/new}">
+                <a th:href="@{/manage/{user}/categories/new(user = ${user})}">
                     Nueva Categoría
                 </a>
             </button>
@@ -32,21 +37,29 @@
     </tr>
     <tr th:each="category:${categories}" th:id="'row' + ${category.getId()}">
         <td>
-            <a th:href="@{/categories/detail/{id}(id = ${category.getId()})}" $>
-                <span th:text="${category.getName()}"/>
-            </a>
+            <span th:text="${category.getName()}"/>
+        </td>
+        <td>
+            <span th:text="${category.getLanguage()}"/>
         </td>
         <td th:text="${category.getPatterns().size()}">
         <td th:text="${category.getInflectionsNames().size()}">
         <td>
+
+            <a th:href="@{/manage/{user}/categories/{id}(user = ${user}, id = ${category.getId()})}"$>
+                <button>
+                Detalles
+            </button>
+            </a>
+
             <button th:onclick="'removeCategory(' + ${category.getId()} + ')'">
                 Eliminar
             </button>
         </td>
 
     </tr>
-
 </table>
+</div>
 <script>
     async function removeCategory(id){
         if (confirm("Está seguro de que quiere eliminar la categoría? Todos los patrones e inflexiones de esta se eliminarán también")) {

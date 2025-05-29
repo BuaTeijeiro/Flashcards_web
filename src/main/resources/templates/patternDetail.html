@@ -2,70 +2,76 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head >
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Detalles de patrón</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<h2>Detalles de Patron: <span th:text="${pattern.getPattern()}"/></h2>
-<form>
-    <input id="idCategory" type="hidden" th:value="${categoryId}">
-    <label th:for="'name'" th:text="'Nombre: '"/>
-    <input th:id="'name'" th:type="text" th:value="${pattern.getName()}">
-    <br/>
-    <label th:for="'pat'" th:text="'Patrón: '"/>
-    <input th:id="'pat'" th:type="text" th:value="${pattern.getPattern()}">
-</form>
+<div>
+    <h2>Detalles de patrón de inflexión:</h2>
+    <form>
+        <input id="idCategory" type="hidden" th:value="${categoryId}">
+        <input id="loggedUser" type="hidden" th:value="${user}">
+        <label th:for="'name'" th:text="'Nombre: '"/>
+        <input th:id="'name'" th:type="text" th:value="${pattern.getName()}">
+        <br/>
+        <label th:for="'pat'" th:text="'Patrón: '"/>
+        <input th:id="'pat'" th:type="text" th:value="${pattern.getPattern()}">
+    </form>
 
-<button th:if="${pattern.getId() == null}" onclick="create()">
-    Guardar
-</button>
-
-<div th:if="${pattern.getId() != null}">
-    <button  onclick="save()">
-        Grabar Cambios
+    <button th:if="${pattern.getId() == null}" onclick="create()">
+        Guardar
     </button>
-    <h3>
-        Inflexiones
-    </h3>
-    <table>
-        <tr>
-            <th>
-                Nombre de Inflexión
-            </th>
-            <th>
-                Modo de Inflexión
-            </th>
-            <th>
-                Afijo de inflexión
-            </th>
-            <th>
-                Acciones
-            </th>
-        </tr>
-        <tr th:each="inflexion,iterStat :${pattern.getInflections()}" >
 
-            <td th:text="${inflexion.getInflection()}">
+    <div th:if="${pattern.getId() != null}">
+        <button  onclick="save()">
+            Grabar Cambios
+        </button>
+        <h3>
+            Inflexiones
+        </h3>
+        <table>
+            <tr>
+                <th>
+                    Nombre de Inflexión
+                </th>
+                <th>
+                    Modo de Inflexión
+                </th>
+                <th>
+                    Afijo de inflexión
+                </th>
+                <th>
+                    Acciones
+                </th>
+            </tr>
+            <tr th:each="inflexion,iterStat :${pattern.getInflections()}" >
 
-            </td>
-            <td>
-                    <select th:id="'mode' + ${inflexion.getId()}" th:onchange="'activateButton(' + ${inflexion.getId()} + ')'" th:value="${inflexion.getMode()}">
+                <td th:text="${inflexion.getInflection()}">
+
+                </td>
+                <td>
+                    <select th:id="'mode' + ${inflexion.getId()}" th:onchange="'activateButton(' + ${inflexion.getId()} + ')'">
                         <option th:each="modo : ${modos}"
                                 th:value="${modo}"
-                                th:text="${modo.getDescription()}">
+                                th:text="${modo.getDescription()}"
+                        th:selected="${modo} == ${inflexion.getMode()}">
                         </option>
                     </select>
-            </td>
-            <td >
-                <input th:id="'id' + ${inflexion.getId()}" type="hidden" th:value="${inflexion.getId()}">
-                <input th:id="'affix' + ${inflexion.getId()}" th:onchange="'activateButton(' + ${inflexion.getId()} + ')'" type="text" th:value="${inflexion.getAffix()}"/>
-            </td>
-            <td>
-                <button th:id="'save' + ${inflexion.getId()}" th:onclick="'saveInflection(' + ${inflexion.getId()} + ')'" th:disabled="'disabled'">
-                    Guardar
-                </button>
-            </td>
-        </tr>
-    </table>
+                </td>
+                <td >
+                    <input th:id="'id' + ${inflexion.getId()}" type="hidden" th:value="${inflexion.getId()}">
+                    <input th:id="'affix' + ${inflexion.getId()}" th:onchange="'activateButton(' + ${inflexion.getId()} + ')'" type="text" th:value="${inflexion.getAffix()}"/>
+                </td>
+                <td>
+                    <button th:id="'save' + ${inflexion.getId()}" th:onclick="'saveInflection(' + ${inflexion.getId()} + ')'" th:disabled="'disabled'">
+                        Guardar
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </div>
 </div>
+
 <script>
     async function create(){
 
@@ -84,8 +90,9 @@
         })
 
         if (response.ok){
-            const pattern = await response.json()
-            window.location.replace("/patterns/detail/" + pattern.id)
+            const pattern = await response.json();
+            const user = document.getElementById("loggedUser").value;
+            window.location.replace("/manage/" + user + "/patterns/detail/" + pattern.id);
         } else {
             alert("No se ha podido crear el patrón: " + JSON.stringify(response.status))
         }

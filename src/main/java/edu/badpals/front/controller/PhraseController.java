@@ -16,7 +16,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 
 @Controller
-@RequestMapping("/manage/{user}/phrase")
+@RequestMapping("/manage/{user}/phrases")
 public class PhraseController {
     @Autowired
     private RestTemplate restTemplate;

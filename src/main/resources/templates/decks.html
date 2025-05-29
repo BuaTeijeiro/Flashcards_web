@@ -2,26 +2,26 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Listado de Conjuntos</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-    <table>
-        <tr th:each="deck: ${decks}">
-            <td>
-                <a th:href="@{/decks/{id}(id = ${deck.getId()})}">
-                    <span th:text="${deck.name}"/>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <button>
-                    <a th:href="@{/decks/new/{id}(id = ${ownerId})}">
-                        <span th:text="'Nuevo'"/>
-                    </a>
-                </button>
-            </td>
-        </tr>
-    </table>
+    <div class ="container">
+        <h2>
+            Listado de Conjuntos
+        </h2>
+        <div class="decks">
+            <a th:href="@{/manage/{user}/decks/{id}(user = ${ownerId}, id = ${deck.getId()})}" th:each="deck: ${decks}">
+                    <div >
+                        <span th:text="${deck.name}"/>
+                    </div>
+            </a>
+            <a  th:href="@{/manage/{user}/decks/new(user = ${ownerId})}">
+                <div class="newDeck">
+                    <span th:text="'Nuevo'"/>
+                </div>
+            </a>
+        </div>
+    </div>
 </body>
 </html>

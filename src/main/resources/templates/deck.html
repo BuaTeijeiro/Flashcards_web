@@ -3,22 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-    <label for="deckName" th:text="'Nombre: '"/>
-    <input id="deckName" type = "text" onchange="activateButton('grabarCambios')" th:value="${deck.getName()}">
-    <br/>
-    <label for="deckLanguage" th:text="'Idioma: '"/>
-    <input id="deckLanguage" type = "text" onchange="activateButton('grabarCambios')" th:value="${deck.getLanguage()}">
-    <br/>
-    <input id="deckId" type="hidden" th:value="${deck.getId()}"/>
-    <input id="ownerId" type="hidden" th:value="${owner}"/>
+    <div class="container">
+        <form>
+            <label for="deckName" th:text="'Nombre: '"/>
+            <input id="deckName" type = "text" onchange="activateButton('grabarCambios')" th:value="${deck.getName()}">
+            <br/>
+            <label for="deckLanguage" th:text="'Idioma: '"/>
+            <input id="deckLanguage" type = "text" onchange="activateButton('grabarCambios')" th:value="${deck.getLanguage()}">
+            <br/>
+            <input id="deckId" type="hidden" th:value="${deck.getId()}"/>
+            <input id="ownerId" type="hidden" th:value="${owner}"/>
 
-    <div th:if="${deck.getId() == null}">
-        <button onclick="create()">
-            Guardar
-        </button>
-    </div>
+            <div th:if="${deck.getId() == null}">
+                <button type="button" onclick="create()">
+                    Guardar
+                </button>
+            </div>
+        </form>
 
     <div th:if="${deck.getId()!= null}">
         <button id="grabarCambios" onclick="update()" disabled>
@@ -26,7 +30,7 @@
         </button>
         <br/>
 
-        <ul>
+        <ul class="tabs">
             <li >
                 <button onclick="changeMenu('words')">
                     Palabras
@@ -53,6 +57,7 @@
                 <th>Significado</th>
                 <th>Nivel</th>
                 <th>Categoria</th>
+                <th>Patrón</th>
                 <th>Acción</th>
             </tr>
             <tr>
@@ -64,6 +69,20 @@
                 </td>
                 <td>
                     <input id="newLevel" name="level" type="number" value="1"/>
+                </td>
+                <td>
+                    <select th:id="'category0'" th:value="''" th:onchange="'reloadPatterns(0);'">
+                        <option value = "0" th:text="''"/>
+                        <option th:each="category : ${categories}"
+                                th:value="${category.getId()}"
+                                th:text="${category.getName()}">
+                        </option>
+                    </select>
+                </td>
+                <td>
+                    <select th:id="'pattern0'" th:value="''">
+                        <option value = "0" th:text="''"/>
+                    </select>
                 </td>
                 <td>
                         <button onclick="createWord()">
@@ -80,7 +99,28 @@
                     <input th:id="'meaning' + ${word.getId()}" th:onchange="'activateWordButton(' + ${word.getId()} + ')'" type="text" th:value="${word.getMeaning()}"/>
                 </td>
                 <td >
-                    <input th:id="'level' + ${word.getId()}" th:onchange="'activateWordButton(' + ${word.getId()} + ')'" type="number" th:value="${word.getLevel()}"/>
+                    <input th:id="'level' + ${word.getId()}" th:onchange="" type="number" th:value="${word.getLevel()}"/>
+                </td>
+                <td>
+                    <select th:id="'category' + ${word.getId()}" th:value="''" th:onchange="'reloadPatterns(' + ${word.getId()} + ');activateWordButton(' + ${word.getId()} + ')'">
+                        <option value = "0" th:text="''"/>
+                        <option th:each="category : ${categories}"
+                                th:value="${category.getId()}"
+                                th:text="${category.getName()}"
+                                th:selected="${category.equals(word.getCategory())}">
+                        </option>
+                    </select>
+                </td>
+                <td>
+                    <select th:id="'pattern' + ${word.getId()}" th:value="''" th:onchange="'activateWordButton(' + ${word.getId()} + ')'">
+                        <option value = "0" th:text="''"/>
+                        <option th:if="${word.getCategory()!=null}"
+                                th:each="pattern : ${word.getCategory().getPatterns()}"
+                                th:value="${pattern.getId()}"
+                                th:text="${pattern.getName()}"
+                                th:selected="${pattern.equals(word.getPattern())}">
+                        </option>
+                    </select>
                 </td>
                 <td>
                     <button th:id="'saveWord' + ${word.getId()}" th:onclick="'updateWord(' + ${word.getId()} + ')'" th:disabled="'disabled'">
@@ -195,6 +235,7 @@
     </table>
         </div>
     </div>
+    </div>
 <script>
     function changeMenu(id) {
         const menus = ["phrases", "students", "words"];
@@ -236,6 +277,8 @@
         const word = document.getElementById("newWord").value;
         const meaning = document.getElementById("newMeaning").value;
         const level = document.getElementById("newLevel").value;
+        const category = document.getElementById("category0").value;
+        const pattern = document.getElementById("pattern0").value;
         const response = await fetch('http://localhost:8081/words/new', {
             method: 'POST',
             headers: {
@@ -245,7 +288,9 @@
                 word: word,
                 meaning: meaning,
                 deckId: deckId,
-                level: level
+                level: level,
+                categoryId: category,
+                patternId: pattern
             })
         })
 
@@ -256,13 +301,16 @@
     }
 
     function seeWord(id){
-        window.location.replace("/words/detail/" + id);
+        const owner = document.getElementById("ownerId").value;
+        window.location.replace("/manage/" + owner + "/words/detail/" + id);
     }
 
     async function updateWord(id){
         const word = document.getElementById("word" + id).value;
         const meaning = document.getElementById("meaning" + id).value;
         const level = document.getElementById("level" + id).value;
+        const category = document.getElementById("category"+id).value;
+        const pattern = document.getElementById("pattern" + id).value;
         const response = await fetch('http://localhost:8081/words/update', {
             method: 'PUT',
             headers: {
@@ -272,7 +320,9 @@
                 id: id,
                 word: word,
                 meaning: meaning,
-                level: level
+                level: level,
+                categoryId: category,
+                patternId: pattern
             })
         });
 
@@ -332,7 +382,8 @@
     }
 
     function seePhrase(id){
-        window.location.replace("/phrases/detail/" + id);
+        const owner = document.getElementById("ownerId").value;
+        window.location.replace("/manage/" + owner + "/phrases/detail/" + id);
     }
 
     async function updatePhrase(id){
@@ -423,8 +474,7 @@
 
         if (response.ok){
             const newDeck = await response.json();
-            alert(JSON.stringify(newDeck));
-            window.location.replace("/decks/" + newDeck.id);
+            window.location.replace("/manage/" + owner + "/decks/" + newDeck.id);
         } else {
             alert("No se ha podido guardar el conjunto," + response.status);
         }
@@ -449,13 +499,11 @@
         if (response.ok){
             const newDeck = await response.json();
             alert(JSON.stringify(newDeck));
-            window.location.replace("/decks/" + newDeck.id);
+            window.location.reload();
         } else {
             alert("No se ha podido modificar el conjunto," + response.status);
         }
     }
-
-
 
     function activateButton(id){
         const button = document.getElementById(id);
@@ -468,7 +516,7 @@
     }
 
     function activateWordButton(id){
-        activateButton("savephrase" + id);
+        activateButton("saveWord" + id);
     }
 
     function activateUserButton(id){
@@ -477,6 +525,40 @@
 
     function activatePhraseButton(id){
         activateButton("savePhrase" + id);
+    }
+
+    async function reloadPatterns(id){
+
+        const categoryId = document.getElementById("category" + id).value;
+
+        const response = await fetch('http://localhost:8081/categories/detail/' + categoryId, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        if (response.ok){
+            const category = await response.json();
+            loadPatterns(category.patterns, id);
+        } else {
+            alert("No se ha podido recargar el combo box: " + JSON.stringify(response.status))
+        }
+    }
+
+
+    function loadPatterns(patterns, id){
+        const select = document.getElementById('pattern' + id);
+        select.innerHTML="";
+        const option = document.createElement("option");
+        option.value = 0;
+        option.text = "";
+        select.appendChild(option);
+        patterns.forEach(function (inflection){
+            const option = document.createElement("option");
+            option.value = inflection.id;
+            option.text = inflection.name;
+            select.appendChild(option);
+        });
     }
 </script>
 </body>

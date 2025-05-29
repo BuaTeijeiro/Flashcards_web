@@ -2,29 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" xmlns:th="http://www.thymeleaf.org">
-    <title>Main Menu</title>
+    <title>Menú Principal</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-    <h2 th:text="'Bienvenido ' + ${userName}"></h2>
-    <li>
-        <a th:href="@{/manage/{user}/decks/all(user = ${userId})}">
-            Administrar Conjuntos
-        </a>
-    </li>
-    <li>
-        <a href="/tags/">
-            Administrar Etiquetas
-        </a>
-    </li>
-    <li>
-        <a href="/categories/all">
-            Administrar Gramática
-        </a>
-    </li>
-    <button>
-        <a href="/logout">
-            Cerrar Sesión
-        </a>
-    </button>
+<div class="container">
+    <h1 th:text="'Bienvenido ' + ${userName}"></h1>
+    <ul class="mainmenu">
+        <li>
+            <a th:href="@{/manage/{user}/decks/all(user = ${userId})}">
+                Administrar Conjuntos
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/manage/{user}/tags/(user = ${userId})}">
+                Administrar Etiquetas
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/manage/{user}/categories/all(user = ${userId})}">
+                Administrar Gramática
+            </a>
+        </li>
+        <li>
+            <a th:href="'/logout'">
+                Cerrar Sesión
+            </a>
+        </li>
+    </ul>
+</div>
 </body>
 </html>

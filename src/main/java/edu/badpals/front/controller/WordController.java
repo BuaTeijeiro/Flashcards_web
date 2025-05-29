@@ -2,6 +2,7 @@ package edu.badpals.front.controller;
 
 import edu.badpals.front.dto.CategoryDto;
 import edu.badpals.front.dto.WordDto;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -19,13 +20,13 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/manage/{user}/words/")
+@RequestMapping("/manage/{user}/words")
 public class WordController {
     @Autowired
     private RestTemplate restTemplate;
 
     @GetMapping("/detail/{id}")
-    public String getWord(@PathVariable long user, @PathVariable long id, Model model){
+    public String getWord(@PathVariable long user, @PathVariable long id, Model model, HttpSession session){
         ResponseEntity<WordDto> response = restTemplate.exchange(
                 "http://localhost:8081/words/detail/" + id,
                 HttpMethod.GET,
@@ -34,8 +35,9 @@ public class WordController {
         );
         WordDto word = response.getBody();
         model.addAttribute("word", word);
+        String language = (String) session.getAttribute(DeckController.DECK_LANGUAGE);
         ResponseEntity<List<CategoryDto>> response3 = restTemplate.exchange(
-                "http://localhost:8081/categories/all/" + user,
+                "http://localhost:8081/categories/all/" + user + "?language=" + language ,
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<List<CategoryDto>>() {}

@@ -2,10 +2,12 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head >
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Listado de Etiquetas</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-    <h2>ETIQUETAS</h2>
+<div class = "container">
+    <h1>Listado de Etiquetas</h1>
     <input id="loggedUser" type="hidden" th:value="${user}">
     <table>
         <tr>
@@ -42,6 +44,7 @@
             </td>
         </tr>
     </table>
+</div>
     <script>
         async function createTag(){
             const tag = document.getElementById("newTag").value;

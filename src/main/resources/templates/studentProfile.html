@@ -2,19 +2,22 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Menú</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<h1 th:text="'Bienvenido: ' + ${userName}">
+<div class="container">
+    <h1 th:text="'Bienvenido: ' + ${userName}">
 
-</h1>
-    <h3>
-        Se halla registrado como un estudiante. De momento la versión web es solo para profesores. Use la aplicación móvil.
-    </h3>
-    <button>
-        <a href="/logout">
-            Cerrar Sesión
-        </a>
-    </button>
+    </h1>
+        <h3>
+            Se halla registrado como un estudiante. De momento la versión web es solo para profesores. Use la aplicación móvil.
+        </h3>
+        <button>
+            <a th:href="@{/logout}">
+                Cerrar Sesión
+            </a>
+        </button>
+    </div>
 </body>
 </html>

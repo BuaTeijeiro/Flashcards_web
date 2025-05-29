@@ -2,7 +2,8 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head >
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Detalle de Frase</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 <script>
@@ -139,107 +140,114 @@
     }
 
 </script>
-<form>
+<div class="container">
+    <h1>Detalle de Frase</h1>
+    <form>
 
-    <input id="loggedUser" type="hidden" th:value="${user}">
-    <input id="id" type="hidden" th:value="${phrase.getId()}">
-    <label th:for="'phrase'" th:text="'Frase: '"/>
-    <input th:id="'phrase'" th:type="'text'" th:value="${phrase.getPhrase()}">
-    <br/>
-    <label th:for="'meaning'" th:text="'Idioma: '"/>
-    <input th:id="'meaning'" th:type="'text'" th:value="${phrase.getMeaning()}">
-    <br/>
-    <label th:for="'level'" th:text="'Nivel: '"/>
-    <input th:id="'level'" type="number" th:value="${phrase.getLevel()}">
-    <br/>
-    <button type="button" onclick="save()">
-        Grabar Cambios
-    </button>
-</form>
+        <input id="loggedUser" type="hidden" th:value="${user}">
+        <input id="id" type="hidden" th:value="${phrase.getId()}">
+        <label th:for="'phrase'" th:text="'Frase: '"/>
+        <input th:id="'phrase'" th:type="'text'" th:value="${phrase.getPhrase()}">
+        <br/>
+        <label th:for="'meaning'" th:text="'Idioma: '"/>
+        <input th:id="'meaning'" th:type="'text'" th:value="${phrase.getMeaning()}">
+        <br/>
+        <label th:for="'level'" th:text="'Nivel: '"/>
+        <input th:id="'level'" type="number" th:value="${phrase.getLevel()}">
+        <br/>
+        <button type="button" onclick="save()">
+            Grabar Cambios
+        </button>
+    </form>
 
-<div>
-    <table>
-        <tr>
-            <th>
-                Palabra
-            </th>
-            <th>
-                Categoría
-            </th>
-            <th>
-                Inflexión
-            </th>
-            <th>
-                Etiquetas
-            </th>
-        </tr>
-        <tr>
-            <td>
-                <select th:id="'newWord'">
-                    <option th:each="word : ${phrase.getPhrase().split(' ')}"
-                            th:value="${word}"
-                            th:text="${word}">
-                    </option>
-                </select>
-            </td>
-            <td>
-                <select th:id="'category0'" th:value="''" th:onchange="'reloadPatterns(0);'">
-                    <option value = "0" th:text="''"/>
-                    <option th:each="category : ${categories}"
-                            th:value="${category.getId()}"
-                            th:text="${category.getName()}">
-                    </option>
-                </select>
-            </td>
-            <td>
-                <select th:id="'inflection0'">
-                    <option value = "" th:text="''"/>
-                </select>
-            </td>
-            <td>
-                <button onclick="createRule()">
-                    Añadir
-                </button>
-            </td>
-        </tr>
-        <tr th:each="rule :${phrase.getSubstitutionRules()}" th:id="'row' + ${rule.getId()}">
-            <td >
-                <input th:id="'id' + ${rule.getId()}" type="hidden" th:value="${rule.getId()}">
-                <select th:id="'word' + ${rule.getId()}" th:onchange="'activateRuleButton(' + ${rule.getId()} + ')'" th:value="${rule.getWord()}">
-                    <option th:each="word : ${phrase.getPhrase().split(' ')}"
-                            th:value="${word}"
-                            th:text="${word}">
-                    </option>
-                </select>
-            </td>
-            <td >
-                <select th:id="'category' + ${rule.getId()}" th:onchange="'reloadPatterns(' + ${rule.getId()} + ');' + 'activateRuleButton(' + ${rule.getId()} + ')'" th:value="${rule.getCategory().getId()}">
-                    <option value = "0" th:text="''"/>
-                    <option th:each="category : ${categories}"
-                            th:value="${category.getId()}"
-                            th:text="${category.getName()}">
-                    </option>
-                </select>
-            </td>
-            <td >
-                <select th:id="'inflection' + ${rule.getId()}" th:onchange="'reloadPatterns(' + ${rule.getId()} + ');'" th:value="${rule.getInflectionName()}">
-                    <option value = "" th:text="''"/>
-                    <option th:each="inflection : ${rule.getCategory().getInflectionsNames()}"
-                            th:value="${inflection}"
-                            th:text="${inflection}">
-                    </option>
-                </select>
-            </td>
-            <td>
-                <button th:id="'saveRule' + ${rule.getId()}" th:onclick="'updateRule(' + ${rule.getId()} + ')'" th:disabled="'disabled'">
-                    Grabar Cambios
-                </button>
-                <button th:onclick="'deleteRule(' + ${rule.getId()} + ')'">
-                    Eliminar
-                </button>
-            </td>
-        </tr>
-    </table>
+    <div>
+        <table>
+            <tr>
+                <th>
+                    Palabra
+                </th>
+                <th>
+                    Categoría
+                </th>
+                <th>
+                    Inflexión
+                </th>
+                <th>
+                    Etiquetas
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <select th:id="'newWord'">
+                        <option th:each="word : ${phrase.getPhrase().split(' ')}"
+                                th:value="${word}"
+                                th:text="${word}">
+                        </option>
+                    </select>
+                </td>
+                <td>
+                    <select th:id="'category0'" th:value="''" th:onchange="'reloadPatterns(0);'">
+                        <option value = "0" th:text="''"/>
+                        <option th:each="category : ${categories}"
+                                th:value="${category.getId()}"
+                                th:text="${category.getName()}">
+                        </option>
+                    </select>
+                </td>
+                <td>
+                    <select th:id="'inflection0'">
+                        <option value = "" th:text="''"/>
+                    </select>
+                </td>
+                <td>
+                    <button onclick="createRule()">
+                        Añadir
+                    </button>
+                </td>
+            </tr>
+            <tr th:each="rule :${phrase.getSubstitutionRules()}" th:id="'row' + ${rule.getId()}">
+                <td >
+                    <input th:id="'id' + ${rule.getId()}" type="hidden" th:value="${rule.getId()}">
+                    <select th:id="'word' + ${rule.getId()}" th:onchange="'activateRuleButton(' + ${rule.getId()} + ')'" th:value="${rule.getWord()}">
+                        <option th:each="word : ${phrase.getPhrase().split(' ')}"
+                                th:value="${word}"
+                                th:text="${word}"
+                        th:selected="${word} == ${rule.getWord()}">
+                        </option>
+                    </select>
+                </td>
+                <td >
+                    <select th:id="'category' + ${rule.getId()}" th:onchange="'reloadPatterns(' + ${rule.getId()} + ');' + 'activateRuleButton(' + ${rule.getId()} + ')'" th:value="${rule.getCategory().getId()}">
+                        <option value = "0" th:text="''"/>
+                        <option th:each="category : ${categories}"
+                                th:value="${category.getId()}"
+                                th:text="${category.getName()}"
+                                th:selected="${category} == ${rule.getCategory()}">
+                        </option>
+                    </select>
+                </td>
+                <td >
+                    <select th:id="'inflection' + ${rule.getId()}" th:onchange="'reloadPatterns(' + ${rule.getId()} + ');'" th:value="${rule.getInflectionName()}">
+                        <option value = "" th:text="''"/>
+                        <option th:each="inflection : ${rule.getCategory().getInflectionsNames()}"
+                                th:value="${inflection}"
+                                th:text="${inflection}"
+                                th:selected="${inflection} == ${rule.getInflectionName()}">
+                        </option>
+                    </select>
+                </td>
+                <td>
+                    <button th:id="'saveRule' + ${rule.getId()}" th:onclick="'updateRule(' + ${rule.getId()} + ')'" th:disabled="'disabled'">
+                        Grabar Cambios
+                    </button>
+                    <button th:onclick="'deleteRule(' + ${rule.getId()} + ')'">
+                        Eliminar
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </div>
+
 </div>
 
 </body>
