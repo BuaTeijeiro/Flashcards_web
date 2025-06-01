@@ -7,7 +7,8 @@
 </head>
 <body>
 <div class="container">
-<h2>Listado de Categorías Gramaticales</h2>
+    <div th:replace="fragments/nav :: nav"></div>
+<h1>Listado de Categorías Gramaticales</h1>
 <table>
     <tr>
         <th>
@@ -80,6 +81,10 @@
                 alert("No se ha podido eliminar la categoría. Error: " + response.status)
             }
         }
+    }
+
+    function volver(){
+        window.location.href = "/menu";
     }
 </script>
 </body>

@@ -7,10 +7,11 @@
 </head>
 <body>
 <div class="container">
-<h1>Detalle de Palabra</h1>
-<form th:object="${word}">
-<!--    <input id="deck" type="hidden" th:value="${word.getDeck().getId()}">-->
+    <div th:replace="fragments/nav :: nav"></div>
+    <h1>Detalle de Palabra</h1>
+    <form th:object="${word}">
     <input th:id="'deckId'" type="hidden" th:value="${deckId}">
+    <input th:id="'userId'" type="hidden" th:value="${user}">
     <label th:for="'word'" th:text="'Nombre: '"/>
     <input th:id="'word'" th:type="text" th:field="*{word}">
     <br/>
@@ -132,6 +133,12 @@
             alert("No se ha podido crear la palabra")
         }
 
+    }
+
+    function volver(){
+        const deck = document.getElementById("deckId").value;
+        const user = document.getElementById("userId").value;
+        window.location.href = "/manage/" + user + "/decks/" + deck;
     }
 </script>
 </body>

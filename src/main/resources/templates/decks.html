@@ -6,7 +6,9 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+
     <div class ="container">
+        <div th:replace="fragments/nav :: nav"></div>
         <h2>
             Listado de Conjuntos
         </h2>
@@ -23,5 +25,10 @@
             </a>
         </div>
     </div>
+<script>
+    function volver(){
+        window.location.href = "/menu";
+    }
+</script>
 </body>
 </html>

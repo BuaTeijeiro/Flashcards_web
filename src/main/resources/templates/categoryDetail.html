@@ -7,6 +7,7 @@
 </head>
 <body>
 <div class="container">
+    <div th:replace="fragments/nav :: nav"></div>
 <h1>Editar Categoría</h1>
 <form>
     <label th:for="'name'" th:text="'Nombre: '"/>
@@ -211,6 +212,11 @@
             }
 
         }
+    }
+
+    function volver(){
+        const user = document.getElementById("loggedUser").value;
+        window.location.href = "/manage/" + user + "/categories/all";
     }
 </script>
 </body>

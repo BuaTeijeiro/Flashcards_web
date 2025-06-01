@@ -36,15 +36,16 @@ public class WordController {
         WordDto word = response.getBody();
         model.addAttribute("word", word);
         String language = (String) session.getAttribute(DeckController.DECK_LANGUAGE);
+        Long deckId = (Long) session.getAttribute(DeckController.DECK_ID);
+        model.addAttribute("deckId", deckId);
         ResponseEntity<List<CategoryDto>> response3 = restTemplate.exchange(
-                "http://localhost:8081/categories/all/" + user + "?language=" + language ,
+                "http://localhost:8081/categories/all-by-language/" + user + "?language=" + language ,
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<List<CategoryDto>>() {}
         );
         List<CategoryDto> categories = response3.getBody();
         model.addAttribute("categories", categories);
-        model.addAttribute("deckId", 0);
         if (word.getCategory()!= null) {
             model.addAttribute("patterns", word.getCategory().getPatterns());
         } else {
@@ -64,10 +65,11 @@ public class WordController {
     }
 
     @GetMapping("/new/{id}")
-    public String newWord(@PathVariable long user, @PathVariable long id, Model model){
+    public String newWord(@PathVariable long user, @PathVariable long id, Model model, HttpSession session){
         model.addAttribute("word", new WordDto());
+        String language = (String) session.getAttribute(DeckController.DECK_LANGUAGE);
         ResponseEntity<List<CategoryDto>> response3 = restTemplate.exchange(
-                "http://localhost:8081/categories/all/" + user,
+                "http://localhost:8081/categories/all-by-language/" + user + "?language=" + language,
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<List<CategoryDto>>() {}

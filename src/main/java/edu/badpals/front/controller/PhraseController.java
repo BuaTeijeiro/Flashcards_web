@@ -2,6 +2,7 @@ package edu.badpals.front.controller;
 
 import edu.badpals.front.dto.CategoryDto;
 import edu.badpals.front.dto.PhraseDto;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -22,7 +23,7 @@ public class PhraseController {
     private RestTemplate restTemplate;
 
     @GetMapping("/detail/{id}")
-    public String getPattern(@PathVariable long user, @PathVariable long id, Model model){
+    public String getPhrase(@PathVariable long user, @PathVariable long id, Model model, HttpSession session){
         ResponseEntity<PhraseDto> response = restTemplate.exchange(
                 "http://localhost:8081/phrases/detail/" + id,
                 HttpMethod.GET,
@@ -31,14 +32,16 @@ public class PhraseController {
         );
         PhraseDto phrase = response.getBody();
         model.addAttribute("phrase", phrase);
-
+        String language = (String) session.getAttribute(DeckController.DECK_LANGUAGE);
         ResponseEntity<List<CategoryDto>> responseCategories = restTemplate.exchange(
-                "http://localhost:8081/categories/all/" +  user,
+                "http://localhost:8081/categories/all-by-language/" +  user + "?language=" + language,
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<List<CategoryDto>>() {}
         );
         List<CategoryDto> categories = responseCategories.getBody();
+        Long deckId = (Long) session.getAttribute(DeckController.DECK_ID);
+        model.addAttribute("deckId", deckId);
         model.addAttribute("phrase", phrase);
         model.addAttribute("user", user);
         model.addAttribute("categories", categories);

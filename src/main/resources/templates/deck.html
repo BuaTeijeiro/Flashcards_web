@@ -2,11 +2,14 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Detalle de Conjunto</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+
     <div class="container">
+        <div th:replace="fragments/nav :: nav"></div>
+        <h1>Detalle de Conjunto</h1>
         <form>
             <label for="deckName" th:text="'Nombre: '"/>
             <input id="deckName" type = "text" onchange="activateButton('grabarCambios')" th:value="${deck.getName()}">
@@ -32,18 +35,18 @@
 
         <ul class="tabs">
             <li >
-                <button onclick="changeMenu('words')">
+                <button id="btnwords" onclick="changeMenu('words')">
                     Palabras
                 </button>
             </li>
             <li>
-                <button onclick="changeMenu('phrases')">
+                <button id="btnphrases" class="active" onclick="changeMenu('phrases')">
                     Frases
                 </button>
 
             </li>
             <li>
-                <button onclick="changeMenu('students')">
+                <button id="btnstudents" onclick="changeMenu('students')">
                     Alumnos
                 </button>
             </li>
@@ -242,8 +245,11 @@
         menus.forEach(function (menu){
             if (menu == id){
                 document.getElementById(menu).setAttribute("style", "display: block");
+                document.getElementById("btn" + menu).setAttribute("class", "active");
             } else {
                 document.getElementById(menu).setAttribute("style", "display: none");
+                document.getElementById("btn" + menu).setAttribute("class", "");
+
             }
         });
     }
@@ -559,6 +565,11 @@
             option.text = inflection.name;
             select.appendChild(option);
         });
+    }
+
+    function volver(){
+        const owner = document.getElementById("ownerId").value;
+        window.location.href="/manage/" + owner + "/decks/all"
     }
 </script>
 </body>

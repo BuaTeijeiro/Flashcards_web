@@ -17,17 +17,12 @@ h1, h2, h3 {
 
 /* Navigation */
 nav {
-    background-color: #0984e3;
+    background-color: #00cec9;
     padding: 1rem;
     color: white;
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-
-nav .logo {
-    font-weight: bold;
-    font-size: 1.5rem;
 }
 
 nav ul {
@@ -376,8 +371,9 @@ div .newDeck {
 }
 
 /* Active tab */
-.tabs li a.active {
+.tabs li button.active {
     background-color: white;
+    color: #00cec9 ;
     border-color: #ccc;
     border-bottom: 2px solid white;
 }

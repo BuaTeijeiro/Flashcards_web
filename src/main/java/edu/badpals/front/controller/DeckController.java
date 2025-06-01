@@ -23,6 +23,7 @@ import java.util.List;
 public class DeckController {
 
     public static final String DECK_LANGUAGE = "deckLanguage";
+    public static final String DECK_ID = "deckID";
     @Autowired
     private RestTemplate restTemplate;
 
@@ -51,8 +52,9 @@ public class DeckController {
         DeckDto deck = response.getBody();
         String language = deck.getLanguage()!=null? deck.getLanguage() : "";
         session.setAttribute(DECK_LANGUAGE, language);
+        session.setAttribute(DECK_ID, deck.getId());
         ResponseEntity<List<CategoryDto>> responseCategories = restTemplate.exchange(
-                "http://localhost:8081/categories/all/"+id + "?language=" +  language,
+                "http://localhost:8081/categories/all-by-language/"+id + "?language=" +  language,
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<List<CategoryDto>>() {}

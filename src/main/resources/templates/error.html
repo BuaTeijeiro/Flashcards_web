@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Error - Something went wrong</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8d7da;
+            color: #721c24;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .error-box {
+            background-color: #f5c6cb;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .error-box h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        .error-box p {
+            margin-bottom: 2rem;
+        }
+        .back-button {
+            text-decoration: none;
+            background-color: #721c24;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+        }
+        .back-button:hover {
+            background-color: #501417;
+        }
+    </style>
+</head>
+<body>
+<div class="error-box">
+    <h1>Ups! Algo salió mal.</h1>
+    <p>La página que estás buscando no existe, o se produjo un error interno inesperado.</p>
+    <a href="/menu" class="back-button">Back to Menu</a>
+</div>
+</body>
+</html>

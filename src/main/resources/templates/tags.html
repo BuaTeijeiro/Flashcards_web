@@ -7,6 +7,7 @@
 </head>
 <body>
 <div class = "container">
+    <div th:replace="fragments/nav :: nav"></div>
     <h1>Listado de Etiquetas</h1>
     <input id="loggedUser" type="hidden" th:value="${user}">
     <table>
@@ -121,6 +122,9 @@
             button.disabled = true;
         }
 
+        function volver(){
+            window.location.href = "/menu"
+        }
 
     </script>
 </body>

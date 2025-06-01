@@ -19,6 +19,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/manage/{user}/categories")
 public class CategoryController {
+    public static final String CATEGORY_ID = "categoryId";
     @Autowired
     private RestTemplate restTemplate;
     @Autowired
@@ -40,13 +41,14 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
-    public String getCategory(@PathVariable long user, @PathVariable long id,Model model){
+    public String getCategory(@PathVariable long user, @PathVariable long id,Model model, HttpSession session){
         ResponseEntity<CategoryDto> response = restTemplate.exchange(
                 "http://localhost:8081/categories/detail/" + id,
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<CategoryDto>() {}
         );
+        session.setAttribute(CATEGORY_ID, id);
         CategoryDto cattegory = response.getBody();
         model.addAttribute("category", cattegory);
         model.addAttribute("user", user);

@@ -2,6 +2,7 @@ package edu.badpals.front.controller;
 
 import edu.badpals.front.dto.InflectionMode;
 import edu.badpals.front.dto.PatternDto;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -20,7 +21,7 @@ public class PatternController {
     private RestTemplate restTemplate;
 
     @GetMapping("/detail/{id}")
-    public String getPattern(@PathVariable long user, @PathVariable long id, Model model){
+    public String getPattern(@PathVariable long user, @PathVariable long id, Model model, HttpSession session){
         ResponseEntity<PatternDto> response = restTemplate.exchange(
                 "http://localhost:8081/patterns/detail/" + id,
                 HttpMethod.GET,
@@ -28,9 +29,10 @@ public class PatternController {
                 new ParameterizedTypeReference<PatternDto>() {}
         );
         PatternDto pattern = response.getBody();
+        Long categoryId = (Long) session.getAttribute(CategoryController.CATEGORY_ID);
         model.addAttribute("pattern", pattern);
         model.addAttribute("modos", InflectionMode.values());
-        model.addAttribute("categoryId", id);
+        model.addAttribute("categoryId", categoryId);
         model.addAttribute("user", user);
 
         return "patternDetail";

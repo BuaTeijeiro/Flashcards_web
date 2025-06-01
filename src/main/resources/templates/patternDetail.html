@@ -7,7 +7,8 @@
 </head>
 <body>
 <div>
-    <h2>Detalles de patrón de inflexión:</h2>
+    <div th:replace="fragments/nav :: nav"></div>
+    <h1>Detalles de patrón de inflexión:</h1>
     <form>
         <input id="idCategory" type="hidden" th:value="${categoryId}">
         <input id="loggedUser" type="hidden" th:value="${user}">
@@ -151,6 +152,12 @@
         } else {
             alert("No se ha podido modificar la inflexión: " + JSON.stringify(response.status))
         }
+    }
+
+    function volver(){
+        const idCategory = document.getElementById("idCategory").value;
+        const user = document.getElementById("loggedUser").value;
+        window.location.href = "/manage/" + user + "/categories/" + idCategory;
     }
 </script>
 

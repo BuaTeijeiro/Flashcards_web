@@ -38,8 +38,6 @@
     async function createRule(){
         const category = document.getElementById("category0").value;
         const inflection = document.getElementById("inflection0").value;
-        alert(category);
-        alert(inflection);
         const word = document.getElementById("newWord").value;
         const id = document.getElementById("id").value;
         const response = await fetch('http://localhost:8081/substitution-rules/new', {
@@ -139,11 +137,18 @@
         });
     }
 
+    function volver(){
+        const deck = document.getElementById("deckId").value;
+        const user = document.getElementById("loggedUser").value;
+        window.location.href = "/manage/" + user + "/decks/" + deck;
+    }
+
 </script>
 <div class="container">
+    <div th:replace="fragments/nav :: nav"></div>
     <h1>Detalle de Frase</h1>
     <form>
-
+        <input th:id="'deckId'" type="hidden" th:value="${deckId}">
         <input id="loggedUser" type="hidden" th:value="${user}">
         <input id="id" type="hidden" th:value="${phrase.getId()}">
         <label th:for="'phrase'" th:text="'Frase: '"/>
