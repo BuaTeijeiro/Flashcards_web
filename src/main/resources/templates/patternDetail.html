@@ -93,6 +93,7 @@
         if (response.ok){
             const pattern = await response.json();
             const user = document.getElementById("loggedUser").value;
+            alert(user);
             window.location.replace("/manage/" + user + "/patterns/detail/" + pattern.id);
         } else {
             alert("No se ha podido crear el patrón: " + JSON.stringify(response.status))
@@ -120,7 +121,7 @@
         if (response.ok){
             alert("Se ha modificado el patrón correctamente")
             const pattern = await response.json()
-            window.location.replace("/patterns/detail/" + pattern.id)
+            window.location.reload()
         } else {
             alert("No se ha podido crear el patrón: " + JSON.stringify(response.status))
         }

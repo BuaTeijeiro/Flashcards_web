@@ -117,12 +117,14 @@
                 <td>
                     <select th:id="'pattern' + ${word.getId()}" th:value="''" th:onchange="'activateWordButton(' + ${word.getId()} + ')'">
                         <option value = "0" th:text="''"/>
-                        <option th:if="${word.getCategory()!=null}"
-                                th:each="pattern : ${word.getCategory().getPatterns()}"
-                                th:value="${pattern.getId()}"
-                                th:text="${pattern.getName()}"
-                                th:selected="${pattern.equals(word.getPattern())}">
-                        </option>
+                        <th:block th:if="${word.getCategory()!=null}">
+                            <option
+                                    th:each="pattern : ${word.getCategory().getPatterns()}"
+                                    th:value="${pattern.getId()}"
+                                    th:text="${pattern.getName()}"
+                                    th:selected="${pattern.equals(word.getPattern())}">
+                            </option>
+                        </th:block>
                     </select>
                 </td>
                 <td>
@@ -504,7 +506,6 @@
 
         if (response.ok){
             const newDeck = await response.json();
-            alert(JSON.stringify(newDeck));
             window.location.reload();
         } else {
             alert("No se ha podido modificar el conjunto," + response.status);

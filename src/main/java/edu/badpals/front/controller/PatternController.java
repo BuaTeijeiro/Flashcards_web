@@ -39,10 +39,11 @@ public class PatternController {
     }
 
     @GetMapping("/new/{idCategory}")
-    public String newCategory(Model model, @PathVariable long idCategory){
+    public String newCategory(Model model, @PathVariable String user, @PathVariable long idCategory){
         model.addAttribute("pattern", new PatternDto());
         model.addAttribute("category", idCategory);
         model.addAttribute("categoryId", idCategory);
+        model.addAttribute("user", user);
         return "patternDetail";
     }
 }
