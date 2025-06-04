@@ -6,8 +6,12 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+
 <div class="container">
-    <h1 th:text="'Bienvenido ' + ${userName}"></h1>
+    <h1 class="appName">DiversiLingua</h1>
+    <div class="centered">
+        <h1 th:text="'Bienvenido ' + ${userName}"></h1>
+    </div>
     <ul class="mainmenu">
         <li>
             <a th:href="@{/manage/{user}/decks/all(user = ${userId})}">

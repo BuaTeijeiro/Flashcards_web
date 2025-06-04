@@ -1,5 +1,7 @@
 body {
     margin: 0;
+    padding: 0;
+    height: 100%;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f5f6fa;
     color: #2f3640;
@@ -10,15 +12,14 @@ h1, h2, h3 {
 }
 
 .container {
-    max-width: 1200px;
-    margin: auto;
-    padding: 2rem;
+    margin: 2rem 2rem 2rem auto;
+    padding: 0 2rem;
 }
 
 /* Navigation */
 nav {
     background-color: #00cec9;
-    padding: 1rem;
+    padding: 2rem;
     color: white;
     display: flex;
     justify-content: space-between;
@@ -33,6 +34,20 @@ nav ul {
 
 nav ul li {
     cursor: pointer;
+}
+
+.appNameNav {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    padding: 0;
+    color: white;
+    letter-spacing: 0.5px;
+    background: linear-gradient(90deg, #dff9fb, #ffffff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: none;
 }
 
 /* Section Layouts */
@@ -142,7 +157,7 @@ form {
     margin-bottom: 20px;
 }
 
-input[type="text"], input[type="password"], textarea, select {
+input[type="text"], input[type="password"], input[type="number"], textarea, select {
     width: 100%;
     padding: 10px;
     margin-top: 8px;
@@ -190,6 +205,10 @@ th {
     background-color: #f0f3f7;
 }
 
+table, tr, td {
+    overflow: visible; /* important */
+}
+
 /* Deck/section cards */
 .deck {
     border: 1px solid #ccc;
@@ -203,7 +222,11 @@ th {
 .deck:hover {
     transform: scale(1.02);
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    background-color: #1abc9c;
+    color: white;
 }
+
+
 
 /* Responsive */
 @media (max-width: 768px) {
@@ -239,14 +262,6 @@ th {
         pointer-events: none;
         box-shadow: none;
         border: none;
-    }
-
-    body, html {
-        height: 100%;
-        margin: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
     }
 
 /* Main menu container */
@@ -326,7 +341,6 @@ a {
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
 
-    /* Maintain square shape */
     aspect-ratio: 1 / 1;
     display: flex;
     align-items: center;
@@ -334,13 +348,15 @@ a {
 }
 
 div .newDeck {
-    background-color: #3498db;
+    background-color: #00cec9;
 }
 
 /* Hover effect */
-.decks > div:hover {
+.decks  div:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background-color: #1abc9c;
+    color: white;
 }
 
 /* Tabs container */
@@ -360,13 +376,11 @@ div .newDeck {
 /* Tab link style */
 .tabs li a {
     display: block;
-    padding: 10px 20px;
     background-color: #f4f4f4;
     color: #333;
     text-decoration: none;
     border: 1px solid #ccc;
     border-bottom: none;
-    border-radius: 8px 8px 0 0;
     font-weight: 500;
 }
 
@@ -384,7 +398,6 @@ div .newDeck {
     padding: 20px;
     background-color: white;
     border: 1px solid #ccc;
-    border-radius: 0 0 8px 8px;
 }
 
 .tab-content.active {
@@ -401,3 +414,16 @@ div .newDeck {
     width: auto; /* or set a max-width if needed */
 }
 
+.appName {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 3rem;
+    font-weight: 700;
+    color: #00cec9;
+    text-align: center;
+    margin: 2rem 0;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(90deg, #00cec9, #0984e3);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}

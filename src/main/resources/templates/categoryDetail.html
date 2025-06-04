@@ -6,8 +6,9 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+<div th:replace="fragments/nav :: nav"></div>
 <div class="container">
-    <div th:replace="fragments/nav :: nav"></div>
+
 <h1>Editar Categoría</h1>
 <form>
     <label th:for="'name'" th:text="'Nombre: '"/>

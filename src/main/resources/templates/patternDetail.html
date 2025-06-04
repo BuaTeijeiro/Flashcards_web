@@ -6,8 +6,9 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<div>
-    <div th:replace="fragments/nav :: nav"></div>
+<div th:replace="fragments/nav :: nav"></div>
+<div class="container">
+
     <h1>Detalles de patrón de inflexión:</h1>
     <form>
         <input id="idCategory" type="hidden" th:value="${categoryId}">

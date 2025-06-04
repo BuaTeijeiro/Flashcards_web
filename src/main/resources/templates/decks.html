@@ -6,17 +6,17 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-
+    <div th:replace="fragments/nav :: nav"></div>
     <div class ="container">
-        <div th:replace="fragments/nav :: nav"></div>
+
         <h2>
             Listado de Conjuntos
         </h2>
         <div class="decks">
             <a th:href="@{/manage/{user}/decks/{id}(user = ${ownerId}, id = ${deck.getId()})}" th:each="deck: ${decks}">
-                    <div >
-                        <span th:text="${deck.name}"/>
-                    </div>
+                <div>
+                    <span th:text="${deck.name}"/>
+                </div>
             </a>
             <a  th:href="@{/manage/{user}/decks/new(user = ${ownerId})}">
                 <div class="newDeck">

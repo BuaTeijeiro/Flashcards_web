@@ -6,9 +6,9 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-
+    <div th:replace="fragments/nav :: nav"></div>
     <div class="container">
-        <div th:replace="fragments/nav :: nav"></div>
+
         <h1>Detalle de Conjunto</h1>
         <form>
             <label for="deckName" th:text="'Nombre: '"/>

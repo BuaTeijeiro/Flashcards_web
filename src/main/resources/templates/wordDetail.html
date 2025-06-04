@@ -6,8 +6,9 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+<div th:replace="fragments/nav :: nav"></div>
 <div class="container">
-    <div th:replace="fragments/nav :: nav"></div>
+
     <h1>Detalle de Palabra</h1>
     <form th:object="${word}">
     <input th:id="'deckId'" type="hidden" th:value="${deckId}">
@@ -56,6 +57,7 @@
 <button onclick="save()">
     Guardar
 </button>
+</div>
 
 <div th:if="${word.getId() != null}">
     <h3>
@@ -76,7 +78,7 @@
         </tr>
     </table>
 </div>
-</div>
+
 <script>
     async function reloadPatterns(){
 
