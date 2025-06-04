@@ -13,7 +13,7 @@ public class WordDto {
     private int level;
     private CategoryDto category;
     private PatternDto pattern;
-    private List<TagDto> tags;
+    private TagDto tag;
 
     public long getId() {
         return id;
@@ -63,12 +63,12 @@ public class WordDto {
         this.pattern = pattern;
     }
 
-    public List<TagDto> getTags() {
-        return tags;
+    public TagDto getTag() {
+        return tag;
     }
 
-    public void setTags(List<TagDto> tags) {
-        this.tags = tags;
+    public void setTag(TagDto tag) {
+        this.tag = tag;
     }
 
     public int getLevel() {

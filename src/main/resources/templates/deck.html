@@ -31,6 +31,9 @@
         <button id="grabarCambios" onclick="update()" disabled>
             Grabar Cambios
         </button>
+        <button type="button" onclick="deleteDeck()">
+            Eliminar
+        </button>
         <br/>
 
         <ul class="tabs">
@@ -59,6 +62,7 @@
                 <th>Palabra</th>
                 <th>Significado</th>
                 <th>Nivel</th>
+                <th>Etiqueta</th>
                 <th>Categoria</th>
                 <th>Patrón</th>
                 <th>Acción</th>
@@ -72,6 +76,15 @@
                 </td>
                 <td>
                     <input id="newLevel" name="level" type="number" value="1"/>
+                </td>
+                <td>
+                    <select th:id="'tag0'" th:value="''">
+                        <option value = "0" th:text="''"/>
+                        <option th:each="tag : ${tags}"
+                                th:value="${tag.getId()}"
+                                th:text="${tag.getTag()}">
+                        </option>
+                    </select>
                 </td>
                 <td>
                     <select th:id="'category0'" th:value="''" th:onchange="'reloadPatterns(0);'">
@@ -103,6 +116,16 @@
                 </td>
                 <td >
                     <input th:id="'level' + ${word.getId()}" th:onchange="" type="number" th:value="${word.getLevel()}"/>
+                </td>
+                <td>
+                    <select th:id="'tag' + ${word.getId()}" th:onchange="'activateWordButton(' + ${word.getId()} + ')'">
+                        <option value = "0" th:text="''"/>
+                        <option th:each="tag : ${tags}"
+                                th:value="${tag.getId()}"
+                                th:text="${tag.getTag()}"
+                                th:selected="${tag} == ${word.getTag()}">
+                        </option>
+                    </select>
                 </td>
                 <td>
                     <select th:id="'category' + ${word.getId()}" th:value="''" th:onchange="'reloadPatterns(' + ${word.getId()} + ');activateWordButton(' + ${word.getId()} + ')'">
@@ -242,8 +265,21 @@
     </div>
     </div>
 <script>
+    let currentTab = "";
+
+    const params = new URLSearchParams(window.location.search);
+    const destinationTab = params.get("tab") || "words";
+    changeMenu(destinationTab);
+
+    function reloadPreservingTab(){
+        const deck = document.getElementById("deckId").value;
+        const owner = document.getElementById("ownerId").value;
+        window.location.href = "/manage/" + owner + "/decks/" +  deck + "?tab=" + currentTab;
+    }
+
     function changeMenu(id) {
         const menus = ["phrases", "students", "words"];
+        currentTab = id;
         menus.forEach(function (menu){
             if (menu == id){
                 document.getElementById(menu).setAttribute("style", "display: block");
@@ -256,29 +292,6 @@
         });
     }
 
-    async function addUser(){
-
-        const email = document.getElementById("newUser").value;
-        const deck = document.getElementById("deckId").value;
-        const level = document.getElementById("newUserLevel").value;;
-        const response = await fetch('http://localhost:8081/decks/users/add', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                userEmail: email,
-                deckId: deck,
-                level: level
-            })
-        });
-
-        if (response.ok){
-            window.location.reload();
-        } else {
-            alert("No se ha podido añadir al usuario")
-        }
-    }
 
     async function createWord(){
         const deckId = document.getElementById("deckId").value;
@@ -287,6 +300,7 @@
         const level = document.getElementById("newLevel").value;
         const category = document.getElementById("category0").value;
         const pattern = document.getElementById("pattern0").value;
+        const tagId = document.getElementById("tag0").value;
         const response = await fetch('http://localhost:8081/words/new', {
             method: 'POST',
             headers: {
@@ -298,19 +312,20 @@
                 deckId: deckId,
                 level: level,
                 categoryId: category,
-                patternId: pattern
+                patternId: pattern,
+                tagId: tagId
             })
         })
 
         if (response.ok){
-            window.location.reload();
+            reloadPreservingTab();
         }
 
     }
 
     function seeWord(id){
         const owner = document.getElementById("ownerId").value;
-        window.location.replace("/manage/" + owner + "/words/detail/" + id);
+        window.location.href = "/manage/" + owner + "/words/detail/" + id;
     }
 
     async function updateWord(id){
@@ -319,6 +334,7 @@
         const level = document.getElementById("level" + id).value;
         const category = document.getElementById("category"+id).value;
         const pattern = document.getElementById("pattern" + id).value;
+        const tagId = document.getElementById("tag" +id ).value;
         const response = await fetch('http://localhost:8081/words/update', {
             method: 'PUT',
             headers: {
@@ -330,7 +346,8 @@
                 meaning: meaning,
                 level: level,
                 categoryId: category,
-                patternId: pattern
+                patternId: pattern,
+                tagId: tagId
             })
         });
 
@@ -382,7 +399,7 @@
         })
 
         if (response.ok){
-            window.location.reload();
+            reloadPreservingTab();
         } else {
             alert("Error al crear la frase");
         }
@@ -391,7 +408,7 @@
 
     function seePhrase(id){
         const owner = document.getElementById("ownerId").value;
-        window.location.replace("/manage/" + owner + "/phrases/detail/" + id);
+        window.location.href = "/manage/" + owner + "/phrases/detail/" + id;
     }
 
     async function updatePhrase(id){
@@ -464,6 +481,52 @@
         }
     }
 
+    async function addUser(){
+        const email = document.getElementById("newUser").value;
+        const level = document.getElementById("newUserLevel").value;
+        const deckId = document.getElementById("deckId").value;
+        const response = await fetch('http://localhost:8081/decks/users/add', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userEmail: email,
+                deckId: deckId,
+                level: level
+            })
+        });
+
+        if (response.ok){
+            alert("Se ha añadido correctamente");
+            reloadPreservingTab();
+        } else {
+            alert("No se ha podido añadir")
+        }
+    }
+
+    async function removeUser(id){
+        const email = document.getElementById("user" + id).textContent;
+        const deckId = document.getElementById("deckId").value;
+        const response = await fetch('http://localhost:8081/decks/users/remove', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userEmail: email,
+                deckId: deckId
+            })
+        });
+
+        if (response.ok){
+            alert("Se ha eliminado correctamente");
+            reloadPreservingTab();
+        } else {
+            alert("No se ha podido eliminar")
+        }
+    }
+
     async function create(){
         const owner = document.getElementById("ownerId").value;
         const name = document.getElementById("deckName").value;
@@ -482,7 +545,7 @@
 
         if (response.ok){
             const newDeck = await response.json();
-            window.location.replace("/manage/" + owner + "/decks/" + newDeck.id);
+            window.location.href = "/manage/" + owner + "/decks/" + newDeck.id;
         } else {
             alert("No se ha podido guardar el conjunto," + response.status);
         }
@@ -506,11 +569,34 @@
 
         if (response.ok){
             const newDeck = await response.json();
-            window.location.reload();
+            reloadPreservingTab();
         } else {
             alert("No se ha podido modificar el conjunto," + response.status);
         }
     }
+
+    async function deleteDeck() {
+        if (confirm("Está seguro de que quiere borrar el conjunto? Esta acción es irreversible.")) {
+
+        const deck = document.getElementById("deckId").value;
+        const response = await fetch('http://localhost:8081/decks/delete', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: deck,
+            })
+        });
+
+        if (response.ok) {
+            volver();
+        } else {
+            alert("No se ha podido eliminar el conjunto," + response.status);
+        }
+        }
+    }
+
 
     function activateButton(id){
         const button = document.getElementById(id);
@@ -546,9 +632,11 @@
         })
         if (response.ok){
             const category = await response.json();
-            loadPatterns(category.patterns, id);
+            let patterns = category.patterns || [];
+            loadPatterns(patterns, id);
         } else {
-            alert("No se ha podido recargar el combo box: " + JSON.stringify(response.status))
+            var inflections = [];
+            loadPatterns(inflections, id);
         }
     }
 

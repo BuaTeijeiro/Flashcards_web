@@ -2,6 +2,7 @@ package edu.badpals.front.controller;
 
 import edu.badpals.front.dto.CategoryDto;
 import edu.badpals.front.dto.PhraseDto;
+import edu.badpals.front.dto.TagDto;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -45,6 +46,15 @@ public class PhraseController {
         model.addAttribute("phrase", phrase);
         model.addAttribute("user", user);
         model.addAttribute("categories", categories);
+
+        ResponseEntity<List<TagDto>> responseTags = restTemplate.exchange(
+                "http://localhost:8081/tags/all/" + user,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<TagDto>>() {}
+        );
+        List<TagDto> tags = responseTags.getBody();
+        model.addAttribute("tags", tags);
 
         return "phraseDetail";
     }

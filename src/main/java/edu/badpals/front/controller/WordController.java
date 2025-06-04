@@ -1,6 +1,7 @@
 package edu.badpals.front.controller;
 
 import edu.badpals.front.dto.CategoryDto;
+import edu.badpals.front.dto.TagDto;
 import edu.badpals.front.dto.WordDto;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +62,15 @@ public class WordController {
         Map<String,String> inflections = response2.getBody();
         model.addAttribute("inflections", inflections);
 
+        ResponseEntity<List<TagDto>> responseTags = restTemplate.exchange(
+                "http://localhost:8081/tags/all/" + user,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<TagDto>>() {}
+        );
+        List<TagDto> tags = responseTags.getBody();
+        model.addAttribute("tags", tags);
+
         return "wordDetail";
     }
 
@@ -81,6 +91,15 @@ public class WordController {
             model.addAttribute("patterns", categories.get(0).getPatterns());
         model.addAttribute("user", user);
         model.addAttribute("inflections", new HashMap<>());
+
+        ResponseEntity<List<TagDto>> responseTags = restTemplate.exchange(
+                "http://localhost:8081/tags/all/" + user,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<TagDto>>() {}
+        );
+        List<TagDto> tags = responseTags.getBody();
+        model.addAttribute("tags", tags);
 
         return "wordDetail";
     }

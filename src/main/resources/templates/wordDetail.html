@@ -11,6 +11,7 @@
     <h1>Detalle de Palabra</h1>
     <form th:object="${word}">
     <input th:id="'deckId'" type="hidden" th:value="${deckId}">
+    <input th:id="'wordId'" type="hidden" th:value="${word.getId()}">
     <input th:id="'userId'" type="hidden" th:value="${user}">
     <label th:for="'word'" th:text="'Nombre: '"/>
     <input th:id="'word'" th:type="text" th:field="*{word}">
@@ -22,20 +23,32 @@
     <input th:id="'level'" type="number" th:field="*{level}">
     <br/>
     <label th:for="'categoria'" th:text="'Categoría: '"/>
-    <select th:id="'categoria'" onchange="reloadPatterns()" th:field="*{category}">
+    <select th:id="'categoria'" onchange="reloadPatterns()">
         <option value = "0" th:text="''"/>
         <option th:each="category : ${categories}"
-                th:value="${category}"
-                th:text="${category.getName()}">
+                th:value="${category.getId()}"
+                th:text="${category.getName()}"
+                th:selected="${category == word.getCategory()}">
         </option>
     </select>
     <br/>
     <label th:for="'pattern'" th:text="'Patrón: '"/>
-    <select th:id="'pattern'" th:field="*{pattern}">
+    <select th:id="'pattern'">
         <option value = "0" th:text="''"/>
         <option th:each="pattern : ${patterns}"
-                th:value="${pattern}"
-                th:text="${pattern.getName()}">
+                th:value="${pattern.getId()}"
+                th:text="${pattern.getName()}"
+                th:selected="${pattern == word.getPattern()}">
+        </option>
+    </select>
+    <br/>
+    <label th:for="'tag'" th:text="'Etiqueta: '"/>
+    <select th:id="'tag'">
+        <option value = "0" th:text="''"/>
+        <option th:each="tag : ${tags}"
+                th:value="${tag.getId()}"
+                th:text="${tag.getTag()}"
+                th:selected="${tag == word.getTag()}">
         </option>
     </select>
 </form>
@@ -45,15 +58,6 @@
 </button>
 
 <div th:if="${word.getId() != null}">
-
-    <h3>
-        Etiquetas
-    </h3>
-    <ul>
-        <li th:each="tag:${word.getTags()}">
-            <span th:text="tag.getTag()"/>
-        </li>
-    </ul>
     <h3>
         Inflexiones
     </h3>
@@ -77,7 +81,7 @@
     async function reloadPatterns(){
 
         const id = document.getElementById("categoria").value;
-        const response = await fetch('http://localhost:8081/words/detail/' + id, {
+        const response = await fetch('http://localhost:8081/categories/detail/' + id, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -87,7 +91,7 @@
             const category = await response.json();
             loadPatterns(category.patterns);
         } else {
-            alert("No se ha podido recargar el combo box: " + JSON.stringify(response.status))
+            loadPatterns([]);
         }
 
     }
@@ -95,6 +99,10 @@
     function loadPatterns(patterns){
         const select = document.getElementById("pattern");
         select.innerHTML="";
+        const option0 = document.createElement("option");
+        option0.value = "0";
+        option0.text = "";
+        select.appendChild(option0);
         patterns.forEach(function (pattern){
             const option = document.createElement("option");
             option.value = pattern.id;
@@ -106,31 +114,34 @@
     async function save(){
 
         const word = document.getElementById("word").value;
+        const id = document.getElementById("wordId").value;
         const meaning = document.getElementById("significado").value;
         const category = document.getElementById("categoria").value;
         const level = document.getElementById("level").value;
         const pattern = document.getElementById("pattern").value;
-        const deck = document.getElementById("deckId").value;
-        const response = await fetch('http://localhost:8081/words/new/', {
-            method: 'POST',
+        const tag = document.getElementById("tag").value;
+        const response = await fetch('http://localhost:8081/words/update', {
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
+                id: id,
                 word: word,
                 meaning: meaning,
                 level: level,
-                deckId: deck,
                 categoryId: category,
-                patternId: pattern
+                patternId: pattern,
+                tagId: tag
             })
         });
 
         if (response.ok){
-            const word = await response.json()
-            window.location.replace("/categories/detail/" + word.id)
+            const word = await response.json();
+            const user = document.getElementById("userId").value;
+            window.location.href = "/manage/" + user  + "/words/detail/" + word.id;
         } else {
-            alert("No se ha podido crear la palabra")
+            alert("No se ha podido modificar la palabra")
         }
 
     }
@@ -138,7 +149,7 @@
     function volver(){
         const deck = document.getElementById("deckId").value;
         const user = document.getElementById("userId").value;
-        window.location.href = "/manage/" + user + "/decks/" + deck;
+        window.location.href = "/manage/" + user + "/decks/" + deck + "?tab=words";
     }
 </script>
 </body>

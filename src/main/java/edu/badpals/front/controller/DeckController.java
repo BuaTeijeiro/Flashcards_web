@@ -3,6 +3,7 @@ package edu.badpals.front.controller;
 import edu.badpals.front.dto.CategoryDto;
 import edu.badpals.front.dto.DeckDto;
 import edu.badpals.front.dto.DeckUserDto;
+import edu.badpals.front.dto.TagDto;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -64,7 +65,7 @@ public class DeckController {
 
         model.addAttribute("deck", deck);
         ResponseEntity<List<DeckUserDto>> responseUsers = restTemplate.exchange(
-                "http://localhost:8081/decks/users/" + user,
+                "http://localhost:8081/decks/users/" + id,
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<List<DeckUserDto>>() {}
@@ -75,6 +76,15 @@ public class DeckController {
         }
         model.addAttribute("users",users);
         model.addAttribute("owner", user);
+
+        ResponseEntity<List<TagDto>> responseTags = restTemplate.exchange(
+                "http://localhost:8081/tags/all/" + user,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<TagDto>>() {}
+        );
+        List<TagDto> tags = responseTags.getBody();
+        model.addAttribute("tags", tags);
         return "deck";
     }
 

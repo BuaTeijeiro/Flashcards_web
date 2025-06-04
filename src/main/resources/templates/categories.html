@@ -29,11 +29,11 @@
     </tr>
     <tr>
         <td colspan="5">
-            <button>
-                <a th:href="@{/manage/{user}/categories/new(user = ${user})}">
+            <a th:href="@{/manage/{user}/categories/new(user = ${user})}">
+                <button>
                     Nueva Categoría
-                </a>
-            </button>
+                </button>
+            </a>
         </td>
     </tr>
     <tr th:each="category:${categories}" th:id="'row' + ${category.getId()}">
@@ -50,7 +50,7 @@
             <a th:href="@{/manage/{user}/categories/{id}(user = ${user}, id = ${category.getId()})}"$>
                 <button>
                 Detalles
-            </button>
+                </button>
             </a>
 
             <button th:onclick="'removeCategory(' + ${category.getId()} + ')'">

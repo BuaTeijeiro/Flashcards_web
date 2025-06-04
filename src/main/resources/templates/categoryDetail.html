@@ -73,11 +73,13 @@
     </tr>
     <tr>
         <td colspan="2">
-            <button>
-                <a th:href="@{/manage/{user}/patterns/new/{idCategory}(user = ${user}, idCategory = ${category.getId()})}" $>
+
+            <a th:href="@{/manage/{user}/patterns/new/{idCategory}(user = ${user}, idCategory = ${category.getId()})}" $>
+                <button>
                     <span th:text="'Nuevo'"/>
-                </a>
-            </button>
+                </button>
+            </a>
+
         </td>
     </tr>
     <tr th:each="pattern:${category.getPatterns()}" th:id="'rowPattern' + ${pattern.getId()}">
@@ -121,7 +123,7 @@
         if (response.ok){
             const category = await response.json()
             const user = document.getElementById("loggedUser").value;
-            window.location.replace("/manage/" + user + "/categories/" + category.id)
+            window.location.href = "/manage/" + user + "/categories/" + category.id;
         } else {
             alert("No se ha podido crear la categoría")
         }

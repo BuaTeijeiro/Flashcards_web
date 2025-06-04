@@ -1,5 +1,7 @@
 package edu.badpals.front.dto;
 
+import java.util.Objects;
+
 public class TagDto {
     private long id;
     private String tag;
@@ -20,5 +22,15 @@ public class TagDto {
         this.tag = tag;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TagDto tagDto)) return false;
+        return id == tagDto.id;
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
 }

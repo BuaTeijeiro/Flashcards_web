@@ -8,7 +8,7 @@ public class SubstitutionRuleDto {
 
     private long id;
     private String word;
-    private List<TagDto> tags;
+    private TagDto tag;
     private CategoryDto category;
     private String inflectionName;
 
@@ -28,12 +28,12 @@ public class SubstitutionRuleDto {
         this.word = word;
     }
 
-    public List<TagDto> getTags() {
-        return tags;
+    public TagDto getTag() {
+        return tag;
     }
 
-    public void setTags(List<TagDto> tags) {
-        this.tags = tags;
+    public void setTag(TagDto tag) {
+        this.tag = tag;
     }
 
     public CategoryDto getCategory() {
