@@ -115,7 +115,7 @@
                     <input th:id="'meaning' + ${word.getId()}" th:onchange="'activateWordButton(' + ${word.getId()} + ')'" type="text" th:value="${word.getMeaning()}"/>
                 </td>
                 <td >
-                    <input th:id="'level' + ${word.getId()}" th:onchange="" type="number" th:value="${word.getLevel()}"/>
+                    <input th:id="'level' + ${word.getId()}" th:onchange="'activateWordButton(' + ${word.getId()} + ')'" type="number" th:value="${word.getLevel()}"/>
                 </td>
                 <td>
                     <select th:id="'tag' + ${word.getId()}" th:onchange="'activateWordButton(' + ${word.getId()} + ')'">

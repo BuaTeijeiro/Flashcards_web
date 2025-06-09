@@ -306,6 +306,7 @@
         if (response.ok){
             const phrases = await response.json();
             let modal = document.getElementById('modalBody');
+            modal.innerHTML="";
             phrases.forEach(function (phrase){
                 const container = document.createElement("div");
                 container.textContent = phrase;

@@ -16,6 +16,49 @@ h1, h2, h3 {
     padding: 0 2rem;
 }
 
+.specialContainer {
+    display: flex;
+    gap: 20px;
+}
+
+.box {
+    flex: 1;
+    padding: 20px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+a.normal-link {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* Optional: mimic default link states */
+a.normal-link:visited {
+    color: purple;
+}
+
+a.normal-link:hover {
+    color: darkblue;
+}
+
+a.normal-link:active {
+    color: red;
+}
+
+.message {
+    display: block;               /* ensures it takes up its own line */
+    color: #d8000c;               /* red text for error */
+    background-color: #ffbaba;    /* light red background */
+    border: 1px solid #d8000c;    /* matching red border */
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
 /* Navigation */
 nav {
     background-color: #00cec9;

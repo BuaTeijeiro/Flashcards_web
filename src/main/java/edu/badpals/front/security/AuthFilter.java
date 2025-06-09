@@ -19,7 +19,8 @@ public class AuthFilter implements Filter {
         HttpSession session = req.getSession(false);
 
         String uri = req.getRequestURI();
-        if (uri.startsWith("/login")) {
+        if ( uri.startsWith("/css/") || uri.startsWith("/js/") ||
+                uri.startsWith("/images/") ||  uri.startsWith("/login") || uri.startsWith("/register")) {
             chain.doFilter(request, response);
             return;
         }

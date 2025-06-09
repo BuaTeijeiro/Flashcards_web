@@ -7,77 +7,84 @@
 </head>
 <body>
 <div th:replace="fragments/nav :: nav"></div>
-<div class="container">
+
+<div class="specialContainer">
+    <div class="box">
+
+
 
     <h1>Detalle de Palabra</h1>
-    <form th:object="${word}">
-    <input th:id="'deckId'" type="hidden" th:value="${deckId}">
-    <input th:id="'wordId'" type="hidden" th:value="${word.getId()}">
-    <input th:id="'userId'" type="hidden" th:value="${user}">
-    <label th:for="'word'" th:text="'Nombre: '"/>
-    <input th:id="'word'" th:type="text" th:field="*{word}">
-    <br/>
-    <label th:for="'significado'" th:text="'Significado: '"/>
-    <input th:id="'significado'" th:type="text" th:field="*{meaning}">
-    <br/>
-    <label th:for="'level'" th:text="'Nivel: '"/>
-    <input th:id="'level'" type="number" th:field="*{level}">
-    <br/>
-    <label th:for="'categoria'" th:text="'Categoría: '"/>
-    <select th:id="'categoria'" onchange="reloadPatterns()">
-        <option value = "0" th:text="''"/>
-        <option th:each="category : ${categories}"
-                th:value="${category.getId()}"
-                th:text="${category.getName()}"
-                th:selected="${category == word.getCategory()}">
-        </option>
-    </select>
-    <br/>
-    <label th:for="'pattern'" th:text="'Patrón: '"/>
-    <select th:id="'pattern'">
-        <option value = "0" th:text="''"/>
-        <option th:each="pattern : ${patterns}"
-                th:value="${pattern.getId()}"
-                th:text="${pattern.getName()}"
-                th:selected="${pattern == word.getPattern()}">
-        </option>
-    </select>
-    <br/>
-    <label th:for="'tag'" th:text="'Etiqueta: '"/>
-    <select th:id="'tag'">
-        <option value = "0" th:text="''"/>
-        <option th:each="tag : ${tags}"
-                th:value="${tag.getId()}"
-                th:text="${tag.getTag()}"
-                th:selected="${tag == word.getTag()}">
-        </option>
-    </select>
-</form>
+        <form th:object="${word}">
+        <input th:id="'deckId'" type="hidden" th:value="${deckId}">
+        <input th:id="'wordId'" type="hidden" th:value="${word.getId()}">
+        <input th:id="'userId'" type="hidden" th:value="${user}">
+        <label th:for="'word'" th:text="'Nombre: '"/>
+        <input th:id="'word'" th:type="text" th:field="*{word}">
+        <br/>
+        <label th:for="'significado'" th:text="'Significado: '"/>
+        <input th:id="'significado'" th:type="text" th:field="*{meaning}">
+        <br/>
+        <label th:for="'level'" th:text="'Nivel: '"/>
+        <input th:id="'level'" type="number" th:field="*{level}">
+        <br/>
+        <label th:for="'categoria'" th:text="'Categoría: '"/>
+        <select th:id="'categoria'" onchange="reloadPatterns()">
+            <option value = "0" th:text="''"/>
+            <option th:each="category : ${categories}"
+                    th:value="${category.getId()}"
+                    th:text="${category.getName()}"
+                    th:selected="${category == word.getCategory()}">
+            </option>
+        </select>
+        <br/>
+        <label th:for="'pattern'" th:text="'Patrón: '"/>
+        <select th:id="'pattern'">
+            <option value = "0" th:text="''"/>
+            <option th:each="pattern : ${patterns}"
+                    th:value="${pattern.getId()}"
+                    th:text="${pattern.getName()}"
+                    th:selected="${pattern == word.getPattern()}">
+            </option>
+        </select>
+        <br/>
+        <label th:for="'tag'" th:text="'Etiqueta: '"/>
+        <select th:id="'tag'">
+            <option value = "0" th:text="''"/>
+            <option th:each="tag : ${tags}"
+                    th:value="${tag.getId()}"
+                    th:text="${tag.getTag()}"
+                    th:selected="${tag == word.getTag()}">
+            </option>
+        </select>
+    </form>
 
-<button onclick="save()">
-    Guardar
-</button>
+    <button onclick="save()">
+        Guardar
+    </button>
+    </div>
+
+    <div class="box" th:if="${word.getId() != null}">
+        <h3>
+            Inflexiones
+        </h3>
+        <table>
+            <tr>
+                <th>
+                    Nombre de Inflexión
+                </th>
+                <th>
+                    Forma
+                </th>
+            </tr>
+            <tr th:each="inflection:${inflections.entrySet()}" >
+                <td th:text="${inflection.getKey()}"></td>
+                <td th:text="${inflection.getValue()}"></td>
+            </tr>
+        </table>
+    </div>
 </div>
 
-<div th:if="${word.getId() != null}">
-    <h3>
-        Inflexiones
-    </h3>
-    <table>
-        <tr>
-            <th>
-                Nombre de Inflexión
-            </th>
-            <th>
-                Forma
-            </th>
-        </tr>
-        <tr th:each="inflection:${inflections.entrySet()}" >
-            <td th:text="${inflection.getKey()}"></td>
-            <td th:text="${inflection.getValue()}"></td>
-        </tr>
-    </table>
-</div>
+
 
 <script>
     async function reloadPatterns(){
